@@ -1,0 +1,18 @@
+name: Only Accept Merge from Develop Branch
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+jobs:
+  only-merge-from-develop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if the pull request is mergeable to main / master
+        run: |
+          if [[ "$GITHUB_HEAD_REF" == 'develop' ]]; then
+            exit 0
+          else
+            echo "Branch de origem inválida! Aceitamos apenas merge da branch develop."
+            exit 1
+          fi

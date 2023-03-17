@@ -1,0 +1,48 @@
+name: Pull Request Validator
+
+on:
+  pull_request:
+    branches: [ develop ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-branch-updated:
+    name: Check if branch is updated with develop
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if branch is up to date
+        id: check_branch
+        run: |
+          # api documentation https://docs.github.com/pt/rest/commits/commits#compare-two-commits
+          returnbranchcomparion=$(curl -sS \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/${{ github.repository }}/compare/${{ github.event.pull_request.base.ref }}...${{ github.event.pull_request.head.ref }})
+          behind_by=$(echo "$returnbranchcomparion" | jq '.behind_by')
+          if [ "$behind_by" -gt 0 ]; then
+            echo "You need to merge / rebase."
+            STATUS="outdated"
+          else
+            echo "Your branch is up to date."
+            STATUS="updated"
+          fi
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ steps.check_branch.outputs.status == 'outdated' }}
+        with:
+          message: |
+            Branch não está sincronizada com a develop, pulando testes. :construction:
+            Clique no botão "Update branch" ao final da página.
+      - if: ${{ steps.check_branch.outputs.status == 'outdated' }}
+        run: |
+          echo "Branch não está sincronizada com a develop." >&2
+          exit 1
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: ${{ steps.check_branch.outputs.status == 'updated' }}
+        with:
+          message: |
+            Branch atualizada! :heavy_check_mark:

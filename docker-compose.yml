@@ -1,0 +1,83 @@
+version: "3.8"
+services:
+    # Application
+    app:
+        hostname: transactions-api
+        container_name: transactions-api
+        build:
+            context: ./docker/services/app
+            dockerfile: app.dockerfile
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        networks:
+            - app-network
+    # Web Server
+    web:
+        hostname: transactions-api-web
+        container_name: transactions-api-web
+        build:
+            context: ./docker/services/web
+            dockerfile: web.dockerfile
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        ports:
+            - "80:80"
+        networks:
+            - app-network
+    # Database
+    database:
+        hostname: transactions-api-database
+        container_name: transactions-api-database
+        image: mysql:8.0.25
+        volumes:
+            - ./docker/volumes/mysql:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports:
+            - "3306:3306"
+        networks:
+            - app-network
+    # Caching
+    redis:
+        hostname: transactions-api-redis
+        container_name: transactions-api-redis
+        image: redis:alpine
+        volumes:
+            - ./docker/volumes/redis:/data
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            retries: 3
+            timeout: 5s
+        networks:
+            - app-network
+    # Mailing Server
+    mailhog:
+        hostname: transactions-api-mailhog
+        container_name: transactions-api-mailhog
+        image: 'mailhog/mailhog:latest'
+        ports:
+            - '${FORWARD_MAILHOG_PORT:-1025}:1025'
+            - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
+volumes:
+    app:
+        driver: local
+    database:
+        driver: local
+    redis:
+        driver: local
+    mailhog:
+        driver: local
