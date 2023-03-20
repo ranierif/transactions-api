@@ -13,11 +13,13 @@ class DocumentTypeSeeder extends Seeder
     public function run(): void
     {
         DocumentType::create([
+            'id' => 1,
             'type' => 'CPF',
             'title' => 'Comum',
         ]);
 
         DocumentType::create([
+            'id' => 2,
             'type' => 'CNPJ',
             'title' => 'Lojista',
         ]);
