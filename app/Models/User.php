@@ -48,6 +48,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function documentType(): BelongsTo
     {
         return $this->belongsTo(DocumentType::class);
