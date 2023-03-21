@@ -4,9 +4,10 @@ namespace App\Providers\User;
 
 use App\Repositories\User\Contracts\UserRepositoryContract;
 use App\Repositories\User\UserRepositoryEloquent;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class UserRepositoryServiceProvider extends ServiceProvider
+class UserRepositoryServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * @return void

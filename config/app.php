@@ -201,6 +201,11 @@ return [
         App\Providers\User\UserServiceProvider::class,
         App\Providers\User\UserRepositoryServiceProvider::class,
 
+        /*
+         * Transaction Service Providers...
+         */
+        App\Providers\Transaction\TransactionRepositoryServiceProvider::class,
+
     ],
 
     /*
