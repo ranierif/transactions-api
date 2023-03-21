@@ -49,8 +49,7 @@ class UserListControllerTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
 
         $response->assertExactJson([
-                'data' => $resource->response($request)->getData(true)['data'],
-            ]
-        );
+            'data' => $resource->response($request)->getData(true)['data'],
+        ]);
     }
 }
