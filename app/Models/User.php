@@ -3,6 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Traits\FormatMoney;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,6 +17,7 @@ class User extends Authenticatable
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
+    use FormatMoney;
 
     /**
      * The attributes that are mass assignable.
@@ -54,5 +58,15 @@ class User extends Authenticatable
     public function documentType(): BelongsTo
     {
         return $this->belongsTo(DocumentType::class);
+    }
+
+    /**
+     * @return Attribute
+     */
+    protected function balanceInReal(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => (string) self::convertCentsToReal($this->balance ?? 0)
+        );
     }
 }
