@@ -3,7 +3,7 @@
 namespace App\Providers\Transaction;
 
 use App\Repositories\Transaction\Contracts\TransactionRepositoryContract;
-use App\Repositories\Transactions\TransactionRepositoryEloquent;
+use App\Repositories\Transaction\TransactionRepositoryEloquent;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 

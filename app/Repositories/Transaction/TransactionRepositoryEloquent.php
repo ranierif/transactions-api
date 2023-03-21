@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Transactions;
+namespace App\Repositories\Transaction;
 
 use App\Models\Transaction;
 use App\Repositories\Base\BaseRepositoryEloquent;

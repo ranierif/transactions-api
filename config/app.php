@@ -206,6 +206,11 @@ return [
          */
         App\Providers\Transaction\TransactionRepositoryServiceProvider::class,
 
+        /*
+         * Chargeback Service Providers...
+         */
+        App\Providers\Chargeback\ChargebackRepositoryServiceProvider::class,
+
     ],
 
     /*
