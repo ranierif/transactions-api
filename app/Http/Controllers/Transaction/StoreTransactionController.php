@@ -11,7 +11,6 @@ use App\Responses\ResponseBuilder;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;

@@ -48,7 +48,7 @@ class StoreTransactionControllerTest extends TestCase
         $payload = [
             'payer_id' => $userPerson->id,
             'payee_id' => $userCompany->id,
-            'value' => 100
+            'value' => 100,
         ];
 
         // Act

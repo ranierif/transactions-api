@@ -19,10 +19,10 @@ class TransactionRepositoryEloquent extends BaseRepositoryEloquent implements Tr
      */
     public function getTransactionsByUserId(int $userId): Collection
     {
-        return $this->model::where(function ($query) use($userId) {
-                $query->where('payee_id', $userId)
-                ->orWhere('payer_id', $userId);
-            })
+        return $this->model::where(function ($query) use ($userId) {
+            $query->where('payee_id', $userId)
+            ->orWhere('payer_id', $userId);
+        })
             ->orderBy('created_at', 'DESC')
             ->get();
     }

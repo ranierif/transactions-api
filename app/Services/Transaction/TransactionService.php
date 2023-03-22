@@ -9,7 +9,6 @@ use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Repositories\Transaction\Contracts\TransactionRepositoryContract;
-use App\Repositories\User\Contracts\UserRepositoryContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use App\Services\User\Contracts\UserServiceContract;
 use Illuminate\Support\Collection;
@@ -100,7 +99,7 @@ class TransactionService implements TransactionServiceContract
             'payer_id' => $payerId,
             'payee_id' => $payeeId,
             'value' => $value,
-            'status_id' => $statusId
+            'status_id' => $statusId,
         ]);
     }
 }

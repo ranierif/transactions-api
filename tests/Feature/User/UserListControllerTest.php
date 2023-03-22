@@ -41,7 +41,7 @@ class UserListControllerTest extends TestCase
     public function test_list_all_users(): void
     {
         // Arrange
-        $users =  $this->userService->getUsers([]);
+        $users = $this->userService->getUsers([]);
         $resource = UserResource::collection($users);
         $request = Request::create(route(self::ROUTE_NAME), 'GET');
 
