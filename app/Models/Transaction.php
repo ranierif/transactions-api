@@ -28,6 +28,22 @@ class Transaction extends Model
     /**
      * @return BelongsTo
      */
+    public function payer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'payer_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function payee(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'payee_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class);
@@ -36,7 +52,7 @@ class Transaction extends Model
     /**
      * @return Attribute
      */
-    protected function totalValueInReal(): Attribute
+    protected function valueInReal(): Attribute
     {
         return Attribute::make(
             get: fn () => (string) self::convertCentsToReal($this->value ?? 0)

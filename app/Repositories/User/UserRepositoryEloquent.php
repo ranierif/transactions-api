@@ -29,4 +29,22 @@ class UserRepositoryEloquent extends BaseRepositoryEloquent implements UserRepos
 
         return $users->get();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function removeBalance(int $userId, int $value): bool
+    {
+        return $this->model::where('id', $userId)
+            ->decrement('balance', $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addBalance(int $userId, int $value): bool
+    {
+        return $this->model::where('id', $userId)
+            ->increment('balance', $value);
+    }
 }

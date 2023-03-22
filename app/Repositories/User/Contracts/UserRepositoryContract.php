@@ -12,4 +12,18 @@ interface UserRepositoryContract extends BaseRepositoryContract
      * @return Collection
      */
     public function getUsers(?array $filters): Collection;
+
+    /**
+     * @param  int  $userId
+     * @param  int  $value
+     * @return bool
+     */
+    public function removeBalance(int $userId, int $value): bool;
+
+    /**
+     * @param  int  $userId
+     * @param  int  $value
+     * @return bool
+     */
+    public function addBalance(int $userId, int $value): bool;
 }

@@ -18,13 +18,16 @@ class UserListControllerTest extends TestCase
     /**
      * @var string
      */
-    private const USER_LIST_ROUTE_NAME = 'users';
+    private const ROUTE_NAME = 'users';
 
     /**
      * @var UserServiceContract
      */
     private $userService;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -40,10 +43,10 @@ class UserListControllerTest extends TestCase
         // Arrange
         $users =  $this->userService->getUsers([]);
         $resource = UserResource::collection($users);
-        $request = Request::create(route(self::USER_LIST_ROUTE_NAME), 'GET');
+        $request = Request::create(route(self::ROUTE_NAME), 'GET');
 
         // Act
-        $response = $this->get(route(self::USER_LIST_ROUTE_NAME));
+        $response = $this->get(route(self::ROUTE_NAME));
 
         // Assert
         $response->assertStatus(Response::HTTP_OK);
