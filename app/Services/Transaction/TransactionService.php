@@ -39,6 +39,12 @@ class TransactionService implements TransactionServiceContract
         return $this->transactionRepository->getTransactionsByUserId($userId);
     }
 
+    /**
+     * @param  int  $payerId
+     * @param  int  $payeeId
+     * @param  int  $value
+     * @return Transaction
+     */
     public function handleNewTransaction(int $payerId, int $payeeId, int $value): Transaction
     {
         $payer = $this->userService->findUserById($payerId);
@@ -60,7 +66,7 @@ class TransactionService implements TransactionServiceContract
             Status::COMPLETE->value,
         );
 
-        // 4 - Notify payee about new transaction
+        // 5 - Notify payee about new transaction
 
         return $transaction;
     }

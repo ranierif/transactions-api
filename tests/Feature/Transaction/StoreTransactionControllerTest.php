@@ -86,7 +86,7 @@ class StoreTransactionControllerTest extends TestCase
     /**
      * @return void
      */
-    public function test_cannot_store_new_transaction_from_company_user_to_person_user(): void
+    public function test_cannot_store_new_transaction_from_user_not_valid_to_send_transaction(): void
     {
         // Arrange
         $userPerson = User::factory()->create(['document_type_id' => 1]);
