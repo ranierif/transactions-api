@@ -16,7 +16,7 @@ use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
-class StoreTransactionControllerTest extends TestCase
+class StoreTransactionTest extends TestCase
 {
     use RefreshDatabase;
     use WithFaker;

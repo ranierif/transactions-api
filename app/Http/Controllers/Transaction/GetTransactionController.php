@@ -37,7 +37,7 @@ class GetTransactionController extends Controller
                 );
 
             return $response->data(TransactionResource::make($transaction))
-                ->status(Response::HTTP_CREATED)
+                ->status(Response::HTTP_FOUND)
                 ->build();
         } catch(ModelNotFoundException $exception) {
             Log::error('Transaction not found', [
