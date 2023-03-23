@@ -16,6 +16,7 @@ use App\Services\Notification\NotificationService;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -165,6 +166,23 @@ class TransactionServiceTest extends TestCase
                 $userCompany->id,
                 $value
             );
+    }
+
+    /**
+     * @return void
+     */
+    public function test_get_transaction_by_id_successfully(): void
+    {
+        // Arrange
+        $transaction = Transaction::factory()->create();
+
+        // Act
+        $getTransaction = app(TransactionServiceContract::class)->getTransactionById($transaction->id);
+
+        // Assert
+        $this->assertInstanceOf(Transaction::class, $getTransaction);
+
+        $this->assertEquals($getTransaction->id, $transaction->id);
     }
 
     /**

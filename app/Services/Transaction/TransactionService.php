@@ -147,4 +147,12 @@ class TransactionService implements TransactionServiceContract
             throw new NotificationToPayeeNotSendedException();
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTransactionById(int $transactionId): ?Transaction
+    {
+        return $this->transactionRepository->findBy('id', $transactionId);
+    }
 }

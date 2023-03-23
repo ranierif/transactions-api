@@ -20,4 +20,10 @@ interface TransactionServiceContract
      * @return Transaction
      */
     public function handleNewTransaction(int $payerId, int $payeeId, int $value): Transaction;
+
+    /**
+     * @param  int  $transactionId
+     * @return null|Transaction
+     */
+    public function getTransactionById(int $transactionId): ?Transaction;
 }

@@ -19,7 +19,7 @@ class TransactionResource extends JsonResource
             'payer' => UserResource::make($this->payer),
             'payee' => UserResource::make($this->payee),
             'value' => $this->resource->valueInReal,
-            'status' => $this->resource->status->name,
+            'status' => $this->resource->status->title,
             'created_at' => $this->resource->created_at->format('Y-m-d H:i:s'),
         ];
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Transaction\GetTransactionController;
 use App\Http\Controllers\Transaction\StoreTransactionController;
 use App\Http\Controllers\User\UserListController;
 use Illuminate\Support\Facades\Route;
@@ -10,4 +11,7 @@ Route::get('/users', UserListController::class)
 Route::prefix('transactions')->name('transactions')->group(function () {
     Route::post('/', StoreTransactionController::class)
         ->name('.store');
+
+    Route::get('/{id}', GetTransactionController::class)
+        ->name('.get');
 });
