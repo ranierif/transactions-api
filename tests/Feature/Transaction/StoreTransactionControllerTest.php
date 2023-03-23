@@ -5,11 +5,15 @@ namespace Tests\Feature\Transaction;
 use App\Enums\Status;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\Authorization\AuthorizationService;
+use App\Services\Authorization\Contracts\AuthorizationServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
+use Mockery;
+use Mockery\MockInterface;
 use Tests\TestCase;
 
 class StoreTransactionControllerTest extends TestCase
@@ -43,6 +47,7 @@ class StoreTransactionControllerTest extends TestCase
     public function test_can_store_new_transaction_from_person_user_to_company_user(): void
     {
         // Arrange
+        $this->mockAuthorizationServiceSuccess();
         $userPerson = User::factory()->create(['document_type_id' => 1]);
         $userCompany = User::factory()->create(['document_type_id' => 2]);
         $payload = [
@@ -146,5 +151,91 @@ class StoreTransactionControllerTest extends TestCase
             'value' => Arr::get($payload, 'value'),
             'status_id' => Status::COMPLETE->value,
         ]);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_cannot_store_new_transaction_when_is_unauthorized(): void
+    {
+        // Arrange
+        $this->mockAuthorizationServiceError();
+        $userPerson = User::factory()->create(['document_type_id' => 1]);
+        $userCompany = User::factory()->create(['document_type_id' => 2]);
+        $payload = [
+            'payer_id' => $userPerson->id,
+            'payee_id' => $userCompany->id,
+            'value' => $userPerson->balance,
+        ];
+
+        // Act
+        $response = $this->postJson(
+            route(self::ROUTE_NAME),
+            $payload
+        );
+
+        // Assert
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+
+        $response->assertJson([
+            'message' => 'Unauthorized to store transaction',
+        ]);
+
+        $this->assertDatabaseMissing(Transaction::class, [
+            'payer_id' => Arr::get($payload, 'payer_id'),
+            'payee_id' => Arr::get($payload, 'payee_id'),
+            'value' => Arr::get($payload, 'value'),
+            'status_id' => Status::COMPLETE->value,
+        ]);
+    }
+
+    /**
+     * @return void
+     */
+    private function mockAuthorizationServiceSuccess(): void
+    {
+        $this->instance(
+            AuthorizationServiceContract::class,
+            Mockery::mock(AuthorizationService::class, function (MockInterface $mock) {
+                return $mock->shouldReceive('verify')
+                    ->andReturn($this->mockAuthorizationResponseSuccess());
+            })
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function mockAuthorizationResponseSuccess(): array
+    {
+        return [
+            'success' => true,
+            'message' => 'Autorizado',
+        ];
+    }
+
+    /**
+     * @return void
+     */
+    private function mockAuthorizationServiceError(): void
+    {
+        $this->instance(
+            AuthorizationServiceContract::class,
+            Mockery::mock(AuthorizationService::class, function (MockInterface $mock) {
+                return $mock->shouldReceive('verify')
+                    ->andReturn($this->mockAuthorizationResponseError());
+            })
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function mockAuthorizationResponseError(): array
+    {
+        return [
+            'success' => false,
+            'message' => 'Fake error message',
+        ];
     }
 }

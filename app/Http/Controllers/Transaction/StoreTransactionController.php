@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
 use App\Exceptions\Transaction\InsufficientFundsToSendTransactionException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Http\Controllers\Controller;
@@ -63,6 +64,16 @@ class StoreTransactionController extends Controller
         } catch (InsufficientFundsToSendTransactionException $exception) {
             Log::error($exception->getMessage(), [
                 'code' => 'insufficient_funds_to_send',
+                'exception' => $exception,
+                'request' => $request,
+            ]);
+
+            return $response->message($exception->getMessage())
+                ->status($exception->getCode())
+                ->build();
+        } catch (UnauthorizedToStoreTransactionException $exception) {
+            Log::error($exception->getMessage(), [
+                'code' => 'unauthorized_store_transaction',
                 'exception' => $exception,
                 'request' => $request,
             ]);

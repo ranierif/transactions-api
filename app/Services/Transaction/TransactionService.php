@@ -4,13 +4,16 @@ namespace App\Services\Transaction;
 
 use App\Enums\DocumentType;
 use App\Enums\Status;
+use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
 use App\Exceptions\Transaction\InsufficientFundsToSendTransactionException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Repositories\Transaction\Contracts\TransactionRepositoryContract;
+use App\Services\Authorization\Contracts\AuthorizationServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use App\Services\User\Contracts\UserServiceContract;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class TransactionService implements TransactionServiceContract
@@ -18,10 +21,12 @@ class TransactionService implements TransactionServiceContract
     /**
      * @param  TransactionRepositoryContract  $transactionRepository
      * @param  UserServiceContract  $userService
+     * @param  AuthorizationServiceContract  $authorizationService
      */
     public function __construct(
         protected TransactionRepositoryContract $transactionRepository,
-        protected UserServiceContract $userService
+        protected UserServiceContract $userService,
+        protected AuthorizationServiceContract $authorizationService
     ) {
         //
     }
@@ -45,6 +50,7 @@ class TransactionService implements TransactionServiceContract
         $this->payerHasBalanceToSend($payer, $value);
 
         // 3 - Check authorization
+        $this->verifyAuthorization();
 
         // 4 - Store transaction
         $transaction = $this->storeTransaction(
@@ -101,5 +107,19 @@ class TransactionService implements TransactionServiceContract
             'value' => $value,
             'status_id' => $statusId,
         ]);
+    }
+
+    /**
+     * @return void
+     *
+     * @throws UnauthorizedToStoreTransactionException
+     */
+    private function verifyAuthorization(): void
+    {
+        $authorization = $this->authorizationService->verify();
+
+        if (! Arr::get($authorization, 'success')) {
+            throw new UnauthorizedToStoreTransactionException();
+        }
     }
 }

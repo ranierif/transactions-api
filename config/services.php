@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'authorization' => [
+        'url' => env('AUTHORIZATION_URL', 'https://run.mocky.io/v3/'),
+        'token' => env('AUTHORIZATION_TOKEN', '8fafdd68-a090-496f-8c9a-3442cf30dae6'),
+        'timeout' => env('AUTHORIZATION_TIMEOUT', 25),
+    ],
+
 ];

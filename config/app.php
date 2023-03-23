@@ -212,6 +212,13 @@ return [
          */
         App\Providers\Chargeback\ChargebackRepositoryServiceProvider::class,
 
+        /*
+         * Authorization Service Providers...
+         */
+        App\Providers\Authorization\AuthorizationServiceProvider::class,
+        App\Providers\Authorization\AuthorizationApiServiceProvider::class,
+        App\Providers\Authorization\AuthorizationClientServiceProvider::class,
+
     ],
 
     /*
