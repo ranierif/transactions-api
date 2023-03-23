@@ -4,12 +4,15 @@ namespace Tests\Unit\Services\Transaction;
 
 use App\Enums\Status;
 use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
+use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
 use App\Exceptions\Transaction\InsufficientFundsToSendTransactionException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Authorization\AuthorizationService;
 use App\Services\Authorization\Contracts\AuthorizationServiceContract;
+use App\Services\Notification\Contracts\NotificationServiceContract;
+use App\Services\Notification\NotificationService;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -47,6 +50,7 @@ class TransactionServiceTest extends TestCase
     {
         // Arrange
         $this->mockAuthorizationServiceSuccess();
+        $this->mockNotificationServiceSuccess();
         $userPerson = User::factory()->create(['document_type_id' => 1]);
         $userCompany = User::factory()->create(['document_type_id' => 2]);
         $value = 100;
@@ -144,6 +148,28 @@ class TransactionServiceTest extends TestCase
     /**
      * @return void
      */
+    public function test_cannot_store_new_transaction_when_not_send_notification_exception(): void
+    {
+        // Arrange
+        $this->mockAuthorizationServiceSuccess();
+        $this->mockNotificationServiceError();
+        $this->expectException(NotificationToPayeeNotSendedException::class);
+        $userPerson = User::factory()->create(['document_type_id' => 1]);
+        $userCompany = User::factory()->create(['document_type_id' => 2]);
+        $value = 100;
+
+        // Act
+        app(TransactionServiceContract::class)
+            ->handleNewTransaction(
+                $userPerson->id,
+                $userCompany->id,
+                $value
+            );
+    }
+
+    /**
+     * @return void
+     */
     private function mockAuthorizationServiceSuccess(): void
     {
         $this->instance(
@@ -184,6 +210,56 @@ class TransactionServiceTest extends TestCase
      * @return array
      */
     private function mockAuthorizationResponseError(): array
+    {
+        return [
+            'success' => false,
+            'message' => 'Fake error message',
+        ];
+    }
+
+    /**
+     * @return void
+     */
+    private function mockNotificationServiceSuccess(): void
+    {
+        $this->instance(
+            NotificationServiceContract::class,
+            Mockery::mock(NotificationService::class, function (MockInterface $mock) {
+                return $mock->shouldReceive('send')
+                    ->andReturn($this->mockNotificationResponseSuccess());
+            })
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function mockNotificationResponseSuccess(): array
+    {
+        return [
+            'success' => true,
+            'message' => 'Success',
+        ];
+    }
+
+    /**
+     * @return void
+     */
+    private function mockNotificationServiceError(): void
+    {
+        $this->instance(
+            NotificationServiceContract::class,
+            Mockery::mock(NotificationService::class, function (MockInterface $mock) {
+                return $mock->shouldReceive('send')
+                    ->andReturn($this->mockNotificationResponseError());
+            })
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function mockNotificationResponseError(): array
     {
         return [
             'success' => false,

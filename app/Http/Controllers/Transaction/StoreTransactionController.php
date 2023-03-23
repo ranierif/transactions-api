@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Transaction;
 
 use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
+use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
 use App\Exceptions\Transaction\InsufficientFundsToSendTransactionException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Http\Controllers\Controller;
@@ -74,6 +75,16 @@ class StoreTransactionController extends Controller
         } catch (UnauthorizedToStoreTransactionException $exception) {
             Log::error($exception->getMessage(), [
                 'code' => 'unauthorized_store_transaction',
+                'exception' => $exception,
+                'request' => $request,
+            ]);
+
+            return $response->message($exception->getMessage())
+                ->status($exception->getCode())
+                ->build();
+        } catch(NotificationToPayeeNotSendedException $exception) {
+            Log::error($exception->getMessage(), [
+                'code' => 'notification_to_payee_not_sended',
                 'exception' => $exception,
                 'request' => $request,
             ]);

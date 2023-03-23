@@ -37,4 +37,9 @@ return [
         'timeout' => env('AUTHORIZATION_TIMEOUT', 25),
     ],
 
+    'notification' => [
+        'url' => env('NOTIFICATION_URL', 'http://o4d9z.mocklab.io/'),
+        'timeout' => env('NOTIFICATION_TIMEOUT', 25),
+    ],
+
 ];

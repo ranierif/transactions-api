@@ -5,12 +5,14 @@ namespace App\Services\Transaction;
 use App\Enums\DocumentType;
 use App\Enums\Status;
 use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
+use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
 use App\Exceptions\Transaction\InsufficientFundsToSendTransactionException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Repositories\Transaction\Contracts\TransactionRepositoryContract;
 use App\Services\Authorization\Contracts\AuthorizationServiceContract;
+use App\Services\Notification\Contracts\NotificationServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use App\Services\User\Contracts\UserServiceContract;
 use Illuminate\Support\Arr;
@@ -22,11 +24,13 @@ class TransactionService implements TransactionServiceContract
      * @param  TransactionRepositoryContract  $transactionRepository
      * @param  UserServiceContract  $userService
      * @param  AuthorizationServiceContract  $authorizationService
+     * @param  NotificationServiceContract  $notificationService
      */
     public function __construct(
         protected TransactionRepositoryContract $transactionRepository,
         protected UserServiceContract $userService,
-        protected AuthorizationServiceContract $authorizationService
+        protected AuthorizationServiceContract $authorizationService,
+        protected NotificationServiceContract $notificationService
     ) {
         //
     }
@@ -67,6 +71,7 @@ class TransactionService implements TransactionServiceContract
         );
 
         // 5 - Notify payee about new transaction
+        $this->sendNotificationToPayee();
 
         return $transaction;
     }
@@ -126,6 +131,20 @@ class TransactionService implements TransactionServiceContract
 
         if (! Arr::get($authorization, 'success')) {
             throw new UnauthorizedToStoreTransactionException();
+        }
+    }
+
+    /**
+     * @return void
+     *
+     * @throws NotificationToPayeeNotSendedException
+     */
+    private function sendNotificationToPayee(): void
+    {
+        $authorization = $this->notificationService->send();
+
+        if (! Arr::get($authorization, 'success')) {
+            throw new NotificationToPayeeNotSendedException();
         }
     }
 }

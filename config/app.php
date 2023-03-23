@@ -219,6 +219,13 @@ return [
         App\Providers\Authorization\AuthorizationApiServiceProvider::class,
         App\Providers\Authorization\AuthorizationClientServiceProvider::class,
 
+        /*
+         * Notification Service Providers...
+         */
+        App\Providers\Notification\NotificationServiceProvider::class,
+        App\Providers\Notification\NotificationApiServiceProvider::class,
+        App\Providers\Notification\NotificationClientServiceProvider::class,
+
     ],
 
     /*
