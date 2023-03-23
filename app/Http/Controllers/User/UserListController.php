@@ -10,6 +10,7 @@ use App\Services\User\Contracts\UserServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class UserListController extends Controller
 {
@@ -36,6 +37,11 @@ class UserListController extends Controller
                 ->status(Response::HTTP_OK)
                 ->build();
         } catch (Exception $exception) {
+            Log::critical('Unexpected error in '.self::class, [
+                'code' => 'unexpected_error',
+                'exception' => $exception,
+            ]);
+
             return $response->message('Unexpected error in '.self::class)
                 ->status(Response::HTTP_INTERNAL_SERVER_ERROR)
                 ->build();
