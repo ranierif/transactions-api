@@ -16,7 +16,6 @@ use App\Services\Notification\NotificationService;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Arr;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;

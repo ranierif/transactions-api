@@ -2,8 +2,8 @@
 
 namespace App\Providers\Notification;
 
-use App\Services\Notification\NotificationClient;
 use App\Services\Notification\Contracts\NotificationClientContract;
+use App\Services\Notification\NotificationClient;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;

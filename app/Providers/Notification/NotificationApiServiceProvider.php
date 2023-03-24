@@ -2,8 +2,8 @@
 
 namespace App\Providers\Notification;
 
-use App\Services\Notification\NotificationApiService;
 use App\Services\Notification\Contracts\NotificationApiServiceContract;
+use App\Services\Notification\NotificationApiService;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 

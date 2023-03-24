@@ -155,4 +155,12 @@ class TransactionService implements TransactionServiceContract
     {
         return $this->transactionRepository->findBy('id', $transactionId);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTransactions(?array $filters): Collection
+    {
+        return $this->transactionRepository->getTransactions($filters);
+    }
 }

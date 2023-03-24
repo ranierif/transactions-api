@@ -4,7 +4,6 @@ namespace Tests\Feature\Transaction;
 
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Models\Transaction;
-use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
@@ -20,21 +19,6 @@ class GetTransactionTest extends TestCase
      * @var string
      */
     private const ROUTE_NAME = 'transactions.get';
-
-    /**
-     * @var TransactionServiceContract
-     */
-    private $transactionService;
-
-    /**
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->transactionService = app()->make(TransactionServiceContract::class);
-    }
 
     /**
      * @return void

@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Services\Notification;
 
-use App\Services\Notification\NotificationService;
 use App\Services\Notification\Contracts\NotificationServiceContract;
+use App\Services\Notification\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Mockery\MockInterface;

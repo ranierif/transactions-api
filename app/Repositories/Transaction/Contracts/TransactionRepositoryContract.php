@@ -12,4 +12,10 @@ interface TransactionRepositoryContract extends BaseRepositoryContract
      * @return Collection
      */
     public function getTransactionsByUserId(int $userId): Collection;
+
+    /**
+     * @param  mixed  $filters
+     * @return Collection
+     */
+    public function getTransactions(?array $filters): Collection;
 }

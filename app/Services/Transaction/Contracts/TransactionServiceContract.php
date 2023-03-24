@@ -26,4 +26,10 @@ interface TransactionServiceContract
      * @return null|Transaction
      */
     public function getTransactionById(int $transactionId): ?Transaction;
+
+    /**
+     * @param  null|array  $filters
+     * @return Collection
+     */
+    public function getTransactions(?array $filters): Collection;
 }
