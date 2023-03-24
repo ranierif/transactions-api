@@ -15,6 +15,7 @@ use App\Services\Notification\Contracts\NotificationServiceContract;
 use App\Services\Notification\NotificationService;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Mockery\MockInterface;
@@ -182,6 +183,97 @@ class TransactionServiceTest extends TestCase
         $this->assertInstanceOf(Transaction::class, $getTransaction);
 
         $this->assertEquals($getTransaction->id, $transaction->id);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_get_transaction_by_id_not_found(): void
+    {
+        // Arrange
+        $this->expectException(ModelNotFoundException::class);
+
+        // Act
+        $getTransaction = app(TransactionServiceContract::class)->getTransactionById(1550);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_get_transactions_successfully(): void
+    {
+        // Arrange
+        $transactions = Transaction::factory(10)->create();
+
+        // Act
+        $getTransactions = app(TransactionServiceContract::class)->getTransactions([]);
+
+        // Assert
+        $this->assertInstanceOf(Collection::class, $getTransactions);
+
+        $this->assertEquals($getTransactions->count(), $transactions->count());
+    }
+
+    /**
+     * @return void
+     */
+    public function test_get_transactions_successfully_with_filter_by_payer_id(): void
+    {
+        // Arrange
+        $transactions = Transaction::factory(10)->create();
+        $firstPayerId = $transactions->first()->payer_id;
+        $countTransactionsFromPayerId = Transaction::where('payer_id', $firstPayerId)->count();
+
+        // Act
+        $getTransactions = app(TransactionServiceContract::class)->getTransactions([
+            'payer_id' => $firstPayerId,
+        ]);
+
+        // Assert
+        $this->assertInstanceOf(Collection::class, $getTransactions);
+
+        $this->assertEquals($getTransactions->count(), $countTransactionsFromPayerId);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_get_transactions_successfully_with_filter_by_payee_id(): void
+    {
+        // Arrange
+        $transactions = Transaction::factory(10)->create();
+        $firstPayeeId = $transactions->first()->payee_id;
+        $countTransactionsFromPayeeId = Transaction::where('payee_id', $firstPayeeId)->count();
+
+        // Act
+        $getTransactions = app(TransactionServiceContract::class)->getTransactions([
+            'payee_id' => $firstPayeeId,
+        ]);
+
+        // Assert
+        $this->assertInstanceOf(Collection::class, $getTransactions);
+
+        $this->assertEquals($getTransactions->count(), $countTransactionsFromPayeeId);
+    }
+
+    /**
+     * @return void
+     */
+    public function test_get_transactions_successfully_with_filter_by_status_id(): void
+    {
+        // Arrange
+        Transaction::factory(10)->create();
+        $countTransactionsFromStatusId = Transaction::where('status_id', Status::COMPLETE->value)->count();
+
+        // Act
+        $getTransactions = app(TransactionServiceContract::class)->getTransactions([
+            'status_id' => Status::COMPLETE->value,
+        ]);
+
+        // Assert
+        $this->assertInstanceOf(Collection::class, $getTransactions);
+
+        $this->assertEquals($getTransactions->count(), $countTransactionsFromStatusId);
     }
 
     /**
