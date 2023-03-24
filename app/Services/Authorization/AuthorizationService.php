@@ -8,16 +8,19 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 use Psr\Http\Message\ResponseInterface;
 
 class AuthorizationService implements AuthorizationServiceContract
 {
     /**
      * @param  AuthorizationApiServiceContract  $service
+     * @param  Logger  $logger
      */
-    public function __construct(private AuthorizationApiServiceContract $service)
-    {
+    public function __construct(
+        private AuthorizationApiServiceContract $service,
+        private Logger $logger
+    ) {
         //
     }
 
@@ -95,7 +98,7 @@ class AuthorizationService implements AuthorizationServiceContract
      */
     private function logResponse(int $status, ?array $data): void
     {
-        Log::debug('Log Authorization Response', [
+        $this->logger->debug('Log Authorization Response', [
             'status' => $status,
             'data' => $data,
         ]);

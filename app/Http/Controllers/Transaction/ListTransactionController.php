@@ -10,15 +10,18 @@ use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 
 class ListTransactionController extends Controller
 {
     /**
      * @param  TransactionServiceContract  $transactionService
+     * @param  Logger  $logger
      */
-    public function __construct(private TransactionServiceContract $transactionService)
-    {
+    public function __construct(
+        private TransactionServiceContract $transactionService,
+        private Logger $logger
+    ) {
         //
     }
 
@@ -40,7 +43,7 @@ class ListTransactionController extends Controller
                 ->status(Response::HTTP_FOUND)
                 ->build();
         } catch (Exception $exception) {
-            Log::critical('Unexpected error in '.self::class, [
+            $this->logger->critical('Unexpected error in '.self::class, [
                 'code' => 'unexpected_error',
                 'exception' => $exception,
                 'request' => $request,

@@ -11,15 +11,18 @@ use App\Services\Chargeback\Contracts\ChargebackServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 
 class StoreChargebackController extends Controller
 {
     /**
      * @param  ChargebackServiceContract  $chargebackService
+     * @param  Logger  $logger
      */
-    public function __construct(private ChargebackServiceContract $chargebackService)
-    {
+    public function __construct(
+        private ChargebackServiceContract $chargebackService,
+        private Logger $logger
+    ) {
         //
     }
 
@@ -46,7 +49,7 @@ class StoreChargebackController extends Controller
                 ->status(Response::HTTP_CREATED)
                 ->build();
         } catch (TransactionAlreadyHasChargebackException $exception) {
-            Log::error($exception->getMessage(), [
+            $this->logger->error($exception->getMessage(), [
                 'code' => 'transaction_already_has_chargeback',
                 'exception' => $exception,
                 'request' => $request,
@@ -57,7 +60,7 @@ class StoreChargebackController extends Controller
                 ->status($exception->getCode())
                 ->build();
         } catch (Exception $exception) {
-            Log::critical('Unexpected error in '.self::class, [
+            $this->logger->critical('Unexpected error in '.self::class, [
                 'code' => 'unexpected_error',
                 'exception' => $exception,
                 'request' => $request,

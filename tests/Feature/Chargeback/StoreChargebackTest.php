@@ -8,7 +8,6 @@ use App\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
-use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 class StoreChargebackTest extends TestCase
@@ -43,7 +42,7 @@ class StoreChargebackTest extends TestCase
 
         $this->assertDatabaseHas(Chargeback::class, [
             'origin_transaction_id' => $transaction->id,
-            'reason' => Arr::get($payload, 'reason'),
+            'reason' => $payload['reason'],
         ]);
 
         $this->assertDatabaseHas(Transaction::class, [
@@ -87,7 +86,7 @@ class StoreChargebackTest extends TestCase
 
         $this->assertDatabaseMissing(Chargeback::class, [
             'origin_transaction_id' => $transaction->id,
-            'reason' => Arr::get($payload, 'reason'),
+            'reason' => $payload['reason'],
         ]);
     }
 }

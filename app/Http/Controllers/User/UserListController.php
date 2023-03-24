@@ -10,15 +10,18 @@ use App\Services\User\Contracts\UserServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 
 class UserListController extends Controller
 {
     /**
      * @param  UserServiceContract  $userService
+     * @param  Logger  $logger
      */
-    public function __construct(private UserServiceContract $userService)
-    {
+    public function __construct(
+        private UserServiceContract $userService,
+        private Logger $logger
+    ) {
         //
     }
 
@@ -37,7 +40,7 @@ class UserListController extends Controller
                 ->status(Response::HTTP_OK)
                 ->build();
         } catch (Exception $exception) {
-            Log::critical('Unexpected error in '.self::class, [
+            $this->logger->critical('Unexpected error in '.self::class, [
                 'code' => 'unexpected_error',
                 'exception' => $exception,
             ]);

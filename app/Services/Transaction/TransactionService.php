@@ -15,19 +15,18 @@ use App\Services\Authorization\Contracts\AuthorizationServiceContract;
 use App\Services\Notification\Contracts\NotificationServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use App\Services\User\Contracts\UserServiceContract;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class TransactionService implements TransactionServiceContract
 {
     /**
-     * @param  TransactionRepositoryContract  $transactionRepository
+     * @param  TransactionRepositoryContract  $repository
      * @param  UserServiceContract  $userService
      * @param  AuthorizationServiceContract  $authorizationService
      * @param  NotificationServiceContract  $notificationService
      */
     public function __construct(
-        protected TransactionRepositoryContract $transactionRepository,
+        protected TransactionRepositoryContract $repository,
         protected UserServiceContract $userService,
         protected AuthorizationServiceContract $authorizationService,
         protected NotificationServiceContract $notificationService
@@ -40,7 +39,7 @@ class TransactionService implements TransactionServiceContract
      */
     public function getTransactionsByUserId(int $userId): Collection
     {
-        return $this->transactionRepository->getTransactionsByUserId($userId);
+        return $this->repository->getTransactionsByUserId($userId);
     }
 
     /**
@@ -105,7 +104,7 @@ class TransactionService implements TransactionServiceContract
      */
     public function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): Transaction
     {
-        return $this->transactionRepository->store([
+        return $this->repository->store([
             'payer_id' => $payerId,
             'payee_id' => $payeeId,
             'value' => $value,
@@ -122,7 +121,7 @@ class TransactionService implements TransactionServiceContract
     {
         $authorization = $this->authorizationService->verify();
 
-        if (! Arr::get($authorization, 'success')) {
+        if (empty($authorization['success']) || ! $authorization['success']) {
             throw new UnauthorizedToStoreTransactionException();
         }
     }
@@ -136,7 +135,7 @@ class TransactionService implements TransactionServiceContract
     {
         $authorization = $this->notificationService->send();
 
-        if (! Arr::get($authorization, 'success')) {
+        if (empty($authorization['success']) || ! $authorization['success']) {
             throw new NotificationToPayeeNotSendedException();
         }
     }
@@ -146,7 +145,7 @@ class TransactionService implements TransactionServiceContract
      */
     public function getTransactionById(int $transactionId): ?Transaction
     {
-        return $this->transactionRepository->findBy('id', $transactionId);
+        return $this->repository->findBy('id', $transactionId);
     }
 
     /**
@@ -154,7 +153,7 @@ class TransactionService implements TransactionServiceContract
      */
     public function getTransactions(?array $filters): Collection
     {
-        return $this->transactionRepository->getTransactions($filters);
+        return $this->repository->getTransactions($filters);
     }
 
     /**
@@ -162,7 +161,7 @@ class TransactionService implements TransactionServiceContract
      */
     public function updateTransactionStatus(int $transactionId, int $statusId): bool
     {
-        return $this->transactionRepository->update(
+        return $this->repository->update(
             $transactionId,
             [
                 'status_id' => $statusId,

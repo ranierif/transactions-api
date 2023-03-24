@@ -10,7 +10,6 @@ use App\Services\Authorization\Contracts\AuthorizationServiceContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
-use Illuminate\Support\Arr;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -50,20 +49,20 @@ class StoreTransactionTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED);
 
         $this->assertDatabaseHas(Transaction::class, [
-            'payer_id' => Arr::get($payload, 'payer_id'),
-            'payee_id' => Arr::get($payload, 'payee_id'),
-            'value' => Arr::get($payload, 'value'),
+            'payer_id' => $payload['payer_id'],
+            'payee_id' => $payload['payee_id'],
+            'value' => $payload['value'],
             'status_id' => Status::COMPLETE->value,
         ]);
 
         $this->assertDatabaseHas(User::class, [
             'id' => $userPerson->id,
-            'balance' => ($userPerson->balance - Arr::get($payload, 'value')),
+            'balance' => ($userPerson->balance - $payload['value']),
         ]);
 
         $this->assertDatabaseHas(User::class, [
             'id' => $userCompany->id,
-            'balance' => ($userCompany->balance + Arr::get($payload, 'value')),
+            'balance' => ($userCompany->balance + $payload['value']),
         ]);
     }
 
@@ -95,9 +94,9 @@ class StoreTransactionTest extends TestCase
         ]);
 
         $this->assertDatabaseMissing(Transaction::class, [
-            'payer_id' => Arr::get($payload, 'payer_id'),
-            'payee_id' => Arr::get($payload, 'payee_id'),
-            'value' => Arr::get($payload, 'value'),
+            'payer_id' => $payload['payer_id'],
+            'payee_id' => $payload['payee_id'],
+            'value' => $payload['value'],
             'status_id' => Status::COMPLETE->value,
         ]);
     }
@@ -130,9 +129,9 @@ class StoreTransactionTest extends TestCase
         ]);
 
         $this->assertDatabaseMissing(Transaction::class, [
-            'payer_id' => Arr::get($payload, 'payer_id'),
-            'payee_id' => Arr::get($payload, 'payee_id'),
-            'value' => Arr::get($payload, 'value'),
+            'payer_id' => $payload['payer_id'],
+            'payee_id' => $payload['payee_id'],
+            'value' => $payload['value'],
             'status_id' => Status::COMPLETE->value,
         ]);
     }
@@ -166,9 +165,9 @@ class StoreTransactionTest extends TestCase
         ]);
 
         $this->assertDatabaseMissing(Transaction::class, [
-            'payer_id' => Arr::get($payload, 'payer_id'),
-            'payee_id' => Arr::get($payload, 'payee_id'),
-            'value' => Arr::get($payload, 'value'),
+            'payer_id' => $payload['payer_id'],
+            'payee_id' => $payload['payee_id'],
+            'value' => $payload['value'],
             'status_id' => Status::COMPLETE->value,
         ]);
     }

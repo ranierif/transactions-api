@@ -10,15 +10,18 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 
 class GetTransactionController extends Controller
 {
     /**
      * @param  TransactionServiceContract  $transactionService
+     * @param  Logger  $logger
      */
-    public function __construct(private TransactionServiceContract $transactionService)
-    {
+    public function __construct(
+        private TransactionServiceContract $transactionService,
+        private Logger $logger
+    ) {
         //
     }
 
@@ -40,7 +43,7 @@ class GetTransactionController extends Controller
                 ->status(Response::HTTP_FOUND)
                 ->build();
         } catch(ModelNotFoundException $exception) {
-            Log::error('Transaction not found', [
+            $this->logger->error('Transaction not found', [
                 'code' => 'transaction_not_found',
                 'exception' => $exception,
                 'transaction_id' => $transactionId,
@@ -50,7 +53,7 @@ class GetTransactionController extends Controller
                 ->status(Response::HTTP_NOT_FOUND)
                 ->build();
         } catch (Exception $exception) {
-            Log::critical('Unexpected error in '.self::class, [
+            $this->logger->critical('Unexpected error in '.self::class, [
                 'code' => 'unexpected_error',
                 'exception' => $exception,
                 'transaction_id' => $transactionId,

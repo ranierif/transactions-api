@@ -14,16 +14,18 @@ use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 
 class StoreTransactionController extends Controller
 {
     /**
      * @param  TransactionServiceContract  $transactionService
+     * @param  Logger  $logger
      */
-    public function __construct(private TransactionServiceContract $transactionService)
-    {
+    public function __construct(
+        private TransactionServiceContract $transactionService,
+        private Logger $logger
+    ) {
         //
     }
 
@@ -37,9 +39,9 @@ class StoreTransactionController extends Controller
 
         try {
             $data = $request->validated();
-            $payerId = Arr::get($data, 'payer_id');
-            $payeeId = Arr::get($data, 'payee_id');
-            $value = Arr::get($data, 'value');
+            $payerId = $data['payer_id'];
+            $payeeId = $data['payee_id'];
+            $value = $data['value'];
 
             $transaction = $this->transactionService
                 ->handleNewTransaction(
@@ -53,7 +55,7 @@ class StoreTransactionController extends Controller
                 ->status(Response::HTTP_CREATED)
                 ->build();
         } catch (PayerCannotSendTransactionsException $exception) {
-            Log::error($exception->getMessage(), [
+            $this->logger->error($exception->getMessage(), [
                 'code' => 'payer_cannot_send_transaction',
                 'exception' => $exception,
                 'request' => $request,
@@ -63,7 +65,7 @@ class StoreTransactionController extends Controller
                 ->status($exception->getCode())
                 ->build();
         } catch (InsufficientFundsToSendTransactionException $exception) {
-            Log::error($exception->getMessage(), [
+            $this->logger->error($exception->getMessage(), [
                 'code' => 'insufficient_funds_to_send',
                 'exception' => $exception,
                 'request' => $request,
@@ -73,7 +75,7 @@ class StoreTransactionController extends Controller
                 ->status($exception->getCode())
                 ->build();
         } catch (UnauthorizedToStoreTransactionException $exception) {
-            Log::error($exception->getMessage(), [
+            $this->logger->error($exception->getMessage(), [
                 'code' => 'unauthorized_store_transaction',
                 'exception' => $exception,
                 'request' => $request,
@@ -83,7 +85,7 @@ class StoreTransactionController extends Controller
                 ->status($exception->getCode())
                 ->build();
         } catch(NotificationToPayeeNotSendedException $exception) {
-            Log::error($exception->getMessage(), [
+            $this->logger->error($exception->getMessage(), [
                 'code' => 'notification_to_payee_not_sended',
                 'exception' => $exception,
                 'request' => $request,
@@ -93,7 +95,7 @@ class StoreTransactionController extends Controller
                 ->status($exception->getCode())
                 ->build();
         } catch (Exception $exception) {
-            Log::critical('Unexpected error in '.self::class, [
+            $this->logger->critical('Unexpected error in '.self::class, [
                 'code' => 'unexpected_error',
                 'exception' => $exception,
                 'request' => $request,

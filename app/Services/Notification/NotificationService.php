@@ -8,16 +8,19 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response as Psr7Response;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 use Psr\Http\Message\ResponseInterface;
 
 class NotificationService implements NotificationServiceContract
 {
     /**
      * @param  NotificationApiServiceContract  $service
+     * @param  Logger  $logger
      */
-    public function __construct(private NotificationApiServiceContract $service)
-    {
+    public function __construct(
+        private NotificationApiServiceContract $service,
+        private Logger $logger
+    ) {
         //
     }
 
@@ -95,7 +98,7 @@ class NotificationService implements NotificationServiceContract
      */
     private function logResponse(int $status, ?array $data): void
     {
-        Log::debug('Log Notification Response', [
+        $this->logger->debug('Log Notification Response', [
             'status' => $status,
             'data' => $data,
         ]);
