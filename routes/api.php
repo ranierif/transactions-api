@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Chargeback\StoreChargebackController;
 use App\Http\Controllers\Transaction\GetTransactionController;
 use App\Http\Controllers\Transaction\ListTransactionController;
 use App\Http\Controllers\Transaction\StoreTransactionController;
@@ -18,4 +19,9 @@ Route::prefix('transactions')->name('transactions')->group(function () {
 
     Route::get('/{id}', GetTransactionController::class)
         ->name('.get');
+});
+
+Route::prefix('chargeback')->name('chargeback')->group(function () {
+    Route::post('/{transactionId}', StoreChargebackController::class)
+        ->name('.store');
 });

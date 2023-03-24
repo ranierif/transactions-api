@@ -44,10 +44,7 @@ class TransactionService implements TransactionServiceContract
     }
 
     /**
-     * @param  int  $payerId
-     * @param  int  $payeeId
-     * @param  int  $value
-     * @return Transaction
+     * {@inheritDoc}
      */
     public function handleNewTransaction(int $payerId, int $payeeId, int $value): Transaction
     {
@@ -104,13 +101,9 @@ class TransactionService implements TransactionServiceContract
     }
 
     /**
-     * @param  int  $payerId
-     * @param  int  $payeeId
-     * @param  int  $value
-     * @param  int  $statusId
-     * @return Transaction
+     * {@inheritDoc}
      */
-    private function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): Transaction
+    public function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): Transaction
     {
         return $this->transactionRepository->store([
             'payer_id' => $payerId,
@@ -162,5 +155,18 @@ class TransactionService implements TransactionServiceContract
     public function getTransactions(?array $filters): Collection
     {
         return $this->transactionRepository->getTransactions($filters);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function updateTransactionStatus(int $transactionId, int $statusId): bool
+    {
+        return $this->transactionRepository->update(
+            $transactionId,
+            [
+                'status_id' => $statusId,
+            ]
+        );
     }
 }

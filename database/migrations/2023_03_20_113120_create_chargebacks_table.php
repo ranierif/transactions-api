@@ -23,7 +23,7 @@ return new class extends Migration
                 ->on('transactions')
                 ->constrained()
                 ->unique();
-            $table->string('reason');
+            $table->string('reason')->nullable();
             $table->timestamps();
         });
     }

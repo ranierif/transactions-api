@@ -211,6 +211,7 @@ return [
          * Chargeback Service Providers...
          */
         App\Providers\Chargeback\ChargebackRepositoryServiceProvider::class,
+        App\Providers\Chargeback\ChargebackServiceProvider::class,
 
         /*
          * Authorization Service Providers...
