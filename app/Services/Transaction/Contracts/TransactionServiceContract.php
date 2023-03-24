@@ -43,8 +43,8 @@ interface TransactionServiceContract
     public function getTransactions(?array $filters): Collection;
 
     /**
-     * @param  mixed $transactionId
-     * @param  mixed $statusId
+     * @param  mixed  $transactionId
+     * @param  mixed  $statusId
      * @return bool
      */
     public function updateTransactionStatus(int $transactionId, int $statusId): bool;

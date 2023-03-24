@@ -8,7 +8,7 @@ interface ChargebackServiceContract
 {
     /**
      * @param  int  $transactionId
-     * @param  null|string $reason
+     * @param  null|string  $reason
      * @return Chargeback
      */
     public function handleChargeback(int $transactionId, ?string $reason): Chargeback;

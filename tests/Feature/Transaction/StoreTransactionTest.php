@@ -7,7 +7,6 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Authorization\AuthorizationService;
 use App\Services\Authorization\Contracts\AuthorizationServiceContract;
-use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -25,21 +24,6 @@ class StoreTransactionTest extends TestCase
      * @var string
      */
     private const ROUTE_NAME = 'transactions.store';
-
-    /**
-     * @var TransactionServiceContract
-     */
-    private $transactionService;
-
-    /**
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        $this->transactionService = app()->make(TransactionServiceContract::class);
-    }
 
     /**
      * @return void

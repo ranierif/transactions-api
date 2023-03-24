@@ -2,8 +2,8 @@
 
 namespace App\Providers\Chargeback;
 
-use App\Services\Chargeback\Contracts\ChargebackServiceContract;
 use App\Services\Chargeback\ChargebackService;
+use App\Services\Chargeback\Contracts\ChargebackServiceContract;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
