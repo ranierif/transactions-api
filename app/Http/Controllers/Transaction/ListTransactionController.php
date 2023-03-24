@@ -10,6 +10,7 @@ use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class ListTransactionController extends Controller
 {
