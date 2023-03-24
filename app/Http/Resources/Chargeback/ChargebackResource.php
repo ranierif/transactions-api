@@ -16,8 +16,8 @@ class ChargebackResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'origin_transaction' => TransactionResource::make($this->resource->originTransaction),
-            'reversal_transaction' => TransactionResource::make($this->resource->reversalTransaction),
+            'origin_transaction' => new TransactionResource($this->resource->originTransaction),
+            'reversal_transaction' => new TransactionResource($this->resource->reversalTransaction),
             'reason' => $this->resource->reason,
             'created_at' => $this->resource->created_at->format('Y-m-d H:i:s'),
         ];
