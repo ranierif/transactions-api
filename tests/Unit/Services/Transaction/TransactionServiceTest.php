@@ -5,7 +5,7 @@ namespace Tests\Unit\Services\Transaction;
 use App\Enums\Status;
 use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
 use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
-use App\Exceptions\Transaction\InsufficientFundsToSendTransactionException;
+use App\Exceptions\Transaction\InsufficientFundsToSendException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Models\Transaction;
 use App\Models\User;
@@ -111,7 +111,7 @@ class TransactionServiceTest extends TestCase
     public function test_cannot_store_new_transaction_with_insufficient_funds_exception(): void
     {
         // Arrange
-        $this->expectException(InsufficientFundsToSendTransactionException::class);
+        $this->expectException(InsufficientFundsToSendException::class);
         $userPerson = User::factory()->create(['document_type_id' => 1]);
         $userCompany = User::factory()->create(['document_type_id' => 2]);
         $value = $userPerson->balance + 100;

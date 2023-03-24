@@ -9,17 +9,19 @@ use App\Models\Transaction;
 use App\Repositories\Chargeback\Contracts\ChargebackRepositoryContract;
 use App\Services\Chargeback\Contracts\ChargebackServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Connection;
 
 class ChargebackService implements ChargebackServiceContract
 {
     /**
      * @param  ChargebackRepositoryContract  $chargebackRepository
      * @param  TransactionServiceContract  $transactionService
+     * @param  Connection  $connection
      */
     public function __construct(
         protected ChargebackRepositoryContract $chargebackRepository,
-        protected TransactionServiceContract $transactionService
+        protected TransactionServiceContract $transactionService,
+        protected Connection $connection
     ) {
         //
     }
@@ -34,7 +36,7 @@ class ChargebackService implements ChargebackServiceContract
 
         $this->canChargeback($transaction->status_id);
 
-        $chargeback = DB::transaction(function () use ($transaction, $reason) {
+        $chargeback = $this->connection->transaction(function () use ($transaction, $reason) {
             $this->updateOriginTransaction($transaction->id);
             $transactionReversal = $this->storeReversalTransaction($transaction);
 

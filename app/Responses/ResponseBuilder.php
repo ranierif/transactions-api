@@ -17,9 +17,9 @@ class ResponseBuilder
      */
     private $status = Response::HTTP_OK;
 
-    public static function init()
+    public static function make(): ResponseBuilder
     {
-        return new static;
+        return new static();
     }
 
     /**

@@ -31,7 +31,7 @@ class GetTransactionController extends Controller
      */
     public function __invoke(int $transactionId): JsonResponse
     {
-        $response = ResponseBuilder::init();
+        $responseBuilder = new ResponseBuilder();
 
         try {
             $transaction = $this->transactionService
@@ -39,7 +39,9 @@ class GetTransactionController extends Controller
                     $transactionId
                 );
 
-            return $response->data(TransactionResource::make($transaction))
+            $transactionResource = new TransactionResource($transaction);
+
+            return $responseBuilder->data($transactionResource->make($transaction))
                 ->status(Response::HTTP_FOUND)
                 ->build();
         } catch(ModelNotFoundException $exception) {
@@ -49,7 +51,7 @@ class GetTransactionController extends Controller
                 'transaction_id' => $transactionId,
             ]);
 
-            return $response->message('Transaction not found')
+            return $responseBuilder->message('Transaction not found')
                 ->status(Response::HTTP_NOT_FOUND)
                 ->build();
         } catch (Exception $exception) {
@@ -59,7 +61,7 @@ class GetTransactionController extends Controller
                 'transaction_id' => $transactionId,
             ]);
 
-            return $response->message('Unexpected error in '.self::class)
+            return $responseBuilder->message('Unexpected error in '.self::class)
                 ->status(Response::HTTP_INTERNAL_SERVER_ERROR)
                 ->build();
         }

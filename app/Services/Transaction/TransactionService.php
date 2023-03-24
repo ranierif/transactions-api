@@ -6,7 +6,7 @@ use App\Enums\DocumentType;
 use App\Enums\Status;
 use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
 use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
-use App\Exceptions\Transaction\InsufficientFundsToSendTransactionException;
+use App\Exceptions\Transaction\InsufficientFundsToSendException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Models\Transaction;
 use App\Models\User;
@@ -90,12 +90,12 @@ class TransactionService implements TransactionServiceContract
      * @param  int  $value
      * @return void
      *
-     * @throws InsufficientFundsToSendTransactionException
+     * @throws InsufficientFundsToSendException
      */
     private function payerHasBalanceToSend(User $user, int $value): void
     {
         if ($user->balance < $value) {
-            throw new InsufficientFundsToSendTransactionException();
+            throw new InsufficientFundsToSendException();
         }
     }
 

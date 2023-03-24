@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Http\Response;
 use Throwable;
 
-class InsufficientFundsToSendTransactionException extends Exception
+class InsufficientFundsToSendException extends Exception
 {
     /**
      * @param  string  $message

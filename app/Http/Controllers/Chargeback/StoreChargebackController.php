@@ -33,7 +33,7 @@ class StoreChargebackController extends Controller
      */
     public function __invoke(int $transactionId, ChargebackStoreRequest $request): JsonResponse
     {
-        $response = ResponseBuilder::init();
+        $responseBuilder = new ResponseBuilder();
 
         try {
             $data = $request->validated();
@@ -44,8 +44,10 @@ class StoreChargebackController extends Controller
                     $data['reason'] ?? null
                 );
 
-            return $response->message('New chargeback created')
-                ->data(ChargebackResource::make($chargeback))
+            $chargebackResource = new ChargebackResource($chargeback);
+
+            return $responseBuilder->message('New chargeback created')
+                ->data($chargebackResource->make($chargeback))
                 ->status(Response::HTTP_CREATED)
                 ->build();
         } catch (TransactionAlreadyHasChargebackException $exception) {
@@ -56,7 +58,7 @@ class StoreChargebackController extends Controller
                 'transaction_id' => $transactionId,
             ]);
 
-            return $response->message($exception->getMessage())
+            return $responseBuilder->message($exception->getMessage())
                 ->status($exception->getCode())
                 ->build();
         } catch (Exception $exception) {
@@ -67,7 +69,7 @@ class StoreChargebackController extends Controller
                 'transaction_id' => $transactionId,
             ]);
 
-            return $response->message('Unexpected error in '.self::class)
+            return $responseBuilder->message('Unexpected error in '.self::class)
                 ->status(Response::HTTP_INTERNAL_SERVER_ERROR)
                 ->build();
         }

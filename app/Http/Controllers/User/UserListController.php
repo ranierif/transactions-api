@@ -31,12 +31,14 @@ class UserListController extends Controller
      */
     public function __invoke(UserListRequest $request): JsonResponse
     {
-        $response = ResponseBuilder::init();
+        $responseBuilder = new ResponseBuilder();
 
         try {
             $users = $this->userService->getUsers($request->validated());
 
-            return $response->data(UserResource::collection($users))
+            $usersResource = new UserResource($users);
+
+            return $responseBuilder->data($usersResource->collection($users))
                 ->status(Response::HTTP_OK)
                 ->build();
         } catch (Exception $exception) {
@@ -45,7 +47,7 @@ class UserListController extends Controller
                 'exception' => $exception,
             ]);
 
-            return $response->message('Unexpected error in '.self::class)
+            return $responseBuilder->message('Unexpected error in '.self::class)
                 ->status(Response::HTTP_INTERNAL_SERVER_ERROR)
                 ->build();
         }

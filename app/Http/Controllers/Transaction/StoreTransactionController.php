@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Transaction;
 
 use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
 use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
-use App\Exceptions\Transaction\InsufficientFundsToSendTransactionException;
+use App\Exceptions\Transaction\InsufficientFundsToSendException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Transaction\TransactionStoreRequest;
@@ -35,7 +35,7 @@ class StoreTransactionController extends Controller
      */
     public function __invoke(TransactionStoreRequest $request): JsonResponse
     {
-        $response = ResponseBuilder::init();
+        $responseBuilder = new ResponseBuilder();
 
         try {
             $data = $request->validated();
@@ -50,8 +50,10 @@ class StoreTransactionController extends Controller
                     $value
                 );
 
-            return $response->message('New transaction created')
-                ->data(TransactionResource::make($transaction))
+            $transactionResource = new TransactionResource($transaction);
+
+            return $responseBuilder->message('New transaction created')
+                ->data($transactionResource->make($transaction))
                 ->status(Response::HTTP_CREATED)
                 ->build();
         } catch (PayerCannotSendTransactionsException $exception) {
@@ -61,17 +63,17 @@ class StoreTransactionController extends Controller
                 'request' => $request,
             ]);
 
-            return $response->message($exception->getMessage())
+            return $responseBuilder->message($exception->getMessage())
                 ->status($exception->getCode())
                 ->build();
-        } catch (InsufficientFundsToSendTransactionException $exception) {
+        } catch (InsufficientFundsToSendException $exception) {
             $this->logger->error($exception->getMessage(), [
                 'code' => 'insufficient_funds_to_send',
                 'exception' => $exception,
                 'request' => $request,
             ]);
 
-            return $response->message($exception->getMessage())
+            return $responseBuilder->message($exception->getMessage())
                 ->status($exception->getCode())
                 ->build();
         } catch (UnauthorizedToStoreTransactionException $exception) {
@@ -81,7 +83,7 @@ class StoreTransactionController extends Controller
                 'request' => $request,
             ]);
 
-            return $response->message($exception->getMessage())
+            return $responseBuilder->message($exception->getMessage())
                 ->status($exception->getCode())
                 ->build();
         } catch(NotificationToPayeeNotSendedException $exception) {
@@ -91,7 +93,7 @@ class StoreTransactionController extends Controller
                 'request' => $request,
             ]);
 
-            return $response->message($exception->getMessage())
+            return $responseBuilder->message($exception->getMessage())
                 ->status($exception->getCode())
                 ->build();
         } catch (Exception $exception) {
@@ -101,7 +103,7 @@ class StoreTransactionController extends Controller
                 'request' => $request,
             ]);
 
-            return $response->message('Unexpected error in '.self::class)
+            return $responseBuilder->message('Unexpected error in '.self::class)
                 ->status(Response::HTTP_INTERNAL_SERVER_ERROR)
                 ->build();
         }

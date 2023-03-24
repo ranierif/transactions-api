@@ -31,7 +31,7 @@ class ListTransactionController extends Controller
      */
     public function __invoke(TransactionListRequest $request): JsonResponse
     {
-        $response = ResponseBuilder::init();
+        $responseBuilder = new ResponseBuilder();
 
         try {
             $transactions = $this->transactionService
@@ -39,7 +39,9 @@ class ListTransactionController extends Controller
                     $request->validated()
                 );
 
-            return $response->data(TransactionResource::collection($transactions))
+            $transactionsResource = new TransactionResource($transactions);
+
+            return $responseBuilder->data($transactionsResource->collection($transactions))
                 ->status(Response::HTTP_FOUND)
                 ->build();
         } catch (Exception $exception) {
@@ -49,7 +51,7 @@ class ListTransactionController extends Controller
                 'request' => $request,
             ]);
 
-            return $response->message('Unexpected error in '.self::class)
+            return $responseBuilder->message('Unexpected error in '.self::class)
                 ->status(Response::HTTP_INTERNAL_SERVER_ERROR)
                 ->build();
         }
