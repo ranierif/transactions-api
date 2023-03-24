@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Repositories\Chargeback\Contracts\ChargebackRepositoryContract;
 use App\Services\Chargeback\Contracts\ChargebackServiceContract;
 use App\Services\Transaction\Contracts\GetTransactionServiceContract;
+use App\Services\Transaction\Contracts\StoreTransactionServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Database\Connection;
 
@@ -18,12 +19,14 @@ class ChargebackService implements ChargebackServiceContract
      * @param  ChargebackRepositoryContract  $chargebackRepository
      * @param  TransactionServiceContract  $transactionService
      * @param  GetTransactionServiceContract  $getTransactionService
+     * @param  StoreTransactionServiceContract  $storeTransactionService
      * @param  Connection  $connection
      */
     public function __construct(
         protected ChargebackRepositoryContract $chargebackRepository,
         protected TransactionServiceContract $transactionService,
         protected GetTransactionServiceContract $getTransactionService,
+        protected StoreTransactionServiceContract $storeTransactionService,
         protected Connection $connection
     ) {
         //
@@ -72,7 +75,7 @@ class ChargebackService implements ChargebackServiceContract
      */
     private function storeReversalTransaction(Transaction $transaction): Transaction
     {
-        return $this->transactionService->storeTransaction(
+        return $this->storeTransactionService->storeTransaction(
             payerId: $transaction->payee_id,
             payeeId: $transaction->payer_id,
             value: $transaction->value,

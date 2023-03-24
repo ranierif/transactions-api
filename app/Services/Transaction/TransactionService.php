@@ -14,6 +14,7 @@ use App\Repositories\Transaction\Contracts\TransactionRepositoryContract;
 use App\Services\Authorization\Contracts\AuthorizationServiceContract;
 use App\Services\Notification\Contracts\NotificationServiceContract;
 use App\Services\Transaction\Contracts\GetTransactionServiceContract;
+use App\Services\Transaction\Contracts\StoreTransactionServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use App\Services\User\Contracts\UserServiceContract;
 
@@ -24,13 +25,16 @@ class TransactionService implements TransactionServiceContract
      * @param  UserServiceContract  $userService
      * @param  AuthorizationServiceContract  $authorizationService
      * @param  NotificationServiceContract  $notificationService
+     * @param  GetTransactionServiceContract  $getTransactionService
+     * @param  StoreTransactionServiceContract  $storeTransactionService
      */
     public function __construct(
         protected TransactionRepositoryContract $repository,
         protected UserServiceContract $userService,
         protected AuthorizationServiceContract $authorizationService,
         protected NotificationServiceContract $notificationService,
-        protected GetTransactionServiceContract $getTransactionService
+        protected GetTransactionServiceContract $getTransactionService,
+        protected StoreTransactionServiceContract $storeTransactionService
     ) {
         //
     }
@@ -52,12 +56,13 @@ class TransactionService implements TransactionServiceContract
         $this->verifyAuthorization();
 
         // 4 - Store transaction
-        $transaction = $this->storeTransaction(
-            $payerId,
-            $payeeId,
-            $value,
-            Status::COMPLETE->value,
-        );
+        $transaction = $this->storeTransactionService
+            ->storeTransaction(
+                $payerId,
+                $payeeId,
+                $value,
+                Status::COMPLETE->value,
+            );
 
         // 5 - Notify payee about new transaction
         $this->sendNotificationToPayee();
@@ -90,19 +95,6 @@ class TransactionService implements TransactionServiceContract
         if ($user->balance < $value) {
             throw new InsufficientFundsToSendException();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): Transaction
-    {
-        return $this->repository->store([
-            'payer_id' => $payerId,
-            'payee_id' => $payeeId,
-            'value' => $value,
-            'status_id' => $statusId,
-        ]);
     }
 
     /**
