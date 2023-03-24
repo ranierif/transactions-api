@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Transaction\TransactionListRequest;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Responses\ResponseBuilder;
-use App\Services\Transaction\Contracts\TransactionServiceContract;
+use App\Services\Transaction\Contracts\GetTransactionServiceContract;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -15,11 +15,11 @@ use Illuminate\Log\Logger;
 class ListTransactionController extends Controller
 {
     /**
-     * @param  TransactionServiceContract  $transactionService
+     * @param  GetTransactionServiceContract  $getTransactionService
      * @param  Logger  $logger
      */
     public function __construct(
-        private TransactionServiceContract $transactionService,
+        private GetTransactionServiceContract $getTransactionService,
         private Logger $logger
     ) {
         //
@@ -34,7 +34,7 @@ class ListTransactionController extends Controller
         $responseBuilder = new ResponseBuilder();
 
         try {
-            $transactions = $this->transactionService
+            $transactions = $this->getTransactionService
                 ->getTransactions(
                     $request->validated()
                 );

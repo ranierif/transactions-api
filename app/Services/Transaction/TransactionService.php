@@ -13,9 +13,9 @@ use App\Models\User;
 use App\Repositories\Transaction\Contracts\TransactionRepositoryContract;
 use App\Services\Authorization\Contracts\AuthorizationServiceContract;
 use App\Services\Notification\Contracts\NotificationServiceContract;
+use App\Services\Transaction\Contracts\GetTransactionServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use App\Services\User\Contracts\UserServiceContract;
-use Illuminate\Support\Collection;
 
 class TransactionService implements TransactionServiceContract
 {
@@ -29,17 +29,10 @@ class TransactionService implements TransactionServiceContract
         protected TransactionRepositoryContract $repository,
         protected UserServiceContract $userService,
         protected AuthorizationServiceContract $authorizationService,
-        protected NotificationServiceContract $notificationService
+        protected NotificationServiceContract $notificationService,
+        protected GetTransactionServiceContract $getTransactionService
     ) {
         //
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTransactionsByUserId(int $userId): Collection
-    {
-        return $this->repository->getTransactionsByUserId($userId);
     }
 
     /**
@@ -138,22 +131,6 @@ class TransactionService implements TransactionServiceContract
         if (empty($authorization['success']) || ! $authorization['success']) {
             throw new NotificationToPayeeNotSendedException();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTransactionById(int $transactionId): ?Transaction
-    {
-        return $this->repository->findBy('id', $transactionId);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTransactions(?array $filters): Collection
-    {
-        return $this->repository->getTransactions($filters);
     }
 
     /**

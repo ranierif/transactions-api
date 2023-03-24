@@ -206,6 +206,7 @@ return [
          */
         App\Providers\Transaction\TransactionRepositoryServiceProvider::class,
         App\Providers\Transaction\TransactionServiceProvider::class,
+        App\Providers\Transaction\GetTransactionServiceProvider::class,
 
         /*
          * Chargeback Service Providers...

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Transaction;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Responses\ResponseBuilder;
-use App\Services\Transaction\Contracts\TransactionServiceContract;
+use App\Services\Transaction\Contracts\GetTransactionServiceContract;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -15,11 +15,11 @@ use Illuminate\Log\Logger;
 class GetTransactionController extends Controller
 {
     /**
-     * @param  TransactionServiceContract  $transactionService
+     * @param  GetTransactionServiceContract  $getTransactionService
      * @param  Logger  $logger
      */
     public function __construct(
-        private TransactionServiceContract $transactionService,
+        private GetTransactionServiceContract $getTransactionService,
         private Logger $logger
     ) {
         //
@@ -34,7 +34,7 @@ class GetTransactionController extends Controller
         $responseBuilder = new ResponseBuilder();
 
         try {
-            $transaction = $this->transactionService
+            $transaction = $this->getTransactionService
                 ->getTransactionById(
                     $transactionId
                 );

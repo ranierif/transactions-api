@@ -8,6 +8,7 @@ use App\Models\Chargeback;
 use App\Models\Transaction;
 use App\Repositories\Chargeback\Contracts\ChargebackRepositoryContract;
 use App\Services\Chargeback\Contracts\ChargebackServiceContract;
+use App\Services\Transaction\Contracts\GetTransactionServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Database\Connection;
 
@@ -16,11 +17,13 @@ class ChargebackService implements ChargebackServiceContract
     /**
      * @param  ChargebackRepositoryContract  $chargebackRepository
      * @param  TransactionServiceContract  $transactionService
+     * @param  GetTransactionServiceContract  $getTransactionService
      * @param  Connection  $connection
      */
     public function __construct(
         protected ChargebackRepositoryContract $chargebackRepository,
         protected TransactionServiceContract $transactionService,
+        protected GetTransactionServiceContract $getTransactionService,
         protected Connection $connection
     ) {
         //
@@ -31,7 +34,7 @@ class ChargebackService implements ChargebackServiceContract
      */
     public function handleChargeback(int $transactionId, ?string $reason): Chargeback
     {
-        $transaction = $this->transactionService
+        $transaction = $this->getTransactionService
             ->getTransactionById($transactionId);
 
         $this->canChargeback($transaction->status_id);

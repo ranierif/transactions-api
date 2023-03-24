@@ -8,12 +8,6 @@ use Illuminate\Support\Collection;
 interface TransactionServiceContract
 {
     /**
-     * @param  int  $userId
-     * @return Collection
-     */
-    public function getTransactionsByUserId(int $userId): Collection;
-
-    /**
      * @param  int  $payerId
      * @param  int  $payeeId
      * @param  int  $value
@@ -29,18 +23,6 @@ interface TransactionServiceContract
      * @return Transaction
      */
     public function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): Transaction;
-
-    /**
-     * @param  int  $transactionId
-     * @return null|Transaction
-     */
-    public function getTransactionById(int $transactionId): ?Transaction;
-
-    /**
-     * @param  null|array  $filters
-     * @return Collection
-     */
-    public function getTransactions(?array $filters): Collection;
 
     /**
      * @param  mixed  $transactionId
