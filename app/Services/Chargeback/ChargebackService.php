@@ -11,6 +11,7 @@ use App\Services\Chargeback\Contracts\ChargebackServiceContract;
 use App\Services\Transaction\Contracts\GetTransactionServiceContract;
 use App\Services\Transaction\Contracts\StoreTransactionServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
+use App\Services\Transaction\Contracts\UpdateTransactionServiceContract;
 use Illuminate\Database\Connection;
 
 class ChargebackService implements ChargebackServiceContract
@@ -20,6 +21,7 @@ class ChargebackService implements ChargebackServiceContract
      * @param  TransactionServiceContract  $transactionService
      * @param  GetTransactionServiceContract  $getTransactionService
      * @param  StoreTransactionServiceContract  $storeTransactionService
+     * @param  UpdateTransactionServiceContract  $updateTransactionService
      * @param  Connection  $connection
      */
     public function __construct(
@@ -27,6 +29,7 @@ class ChargebackService implements ChargebackServiceContract
         protected TransactionServiceContract $transactionService,
         protected GetTransactionServiceContract $getTransactionService,
         protected StoreTransactionServiceContract $storeTransactionService,
+        protected UpdateTransactionServiceContract $updateTransactionService,
         protected Connection $connection
     ) {
         //
@@ -89,7 +92,7 @@ class ChargebackService implements ChargebackServiceContract
      */
     private function updateOriginTransaction(int $transactionId): bool
     {
-        return $this->transactionService->updateTransactionStatus(
+        return $this->updateTransactionService->updateStatus(
             $transactionId,
             Status::CHARGEBACK->value
         );

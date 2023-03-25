@@ -13,11 +13,4 @@ interface TransactionServiceContract
      * @return Transaction
      */
     public function handleNewTransaction(int $payerId, int $payeeId, int $value): Transaction;
-
-    /**
-     * @param  mixed  $transactionId
-     * @param  mixed  $statusId
-     * @return bool
-     */
-    public function updateTransactionStatus(int $transactionId, int $statusId): bool;
 }

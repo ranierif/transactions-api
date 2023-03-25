@@ -208,6 +208,8 @@ return [
         App\Providers\Transaction\TransactionServiceProvider::class,
         App\Providers\Transaction\GetTransactionServiceProvider::class,
         App\Providers\Transaction\StoreTransactionServiceProvider::class,
+        App\Providers\Transaction\ValidatePayerServiceProvider::class,
+        App\Providers\Transaction\UpdateTransactionServiceProvider::class,
 
         /*
          * Chargeback Service Providers...
