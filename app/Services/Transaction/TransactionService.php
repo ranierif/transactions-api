@@ -4,11 +4,10 @@ namespace App\Services\Transaction;
 
 use App\Enums\Status;
 use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
-use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
+use App\Jobs\Notification\SendNotificationJob;
 use App\Models\Transaction;
 use App\Repositories\Transaction\Contracts\TransactionRepositoryContract;
 use App\Services\Authorization\Contracts\AuthorizationServiceContract;
-use App\Services\Notification\Contracts\NotificationServiceContract;
 use App\Services\Transaction\Contracts\StoreTransactionServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use App\Services\Transaction\Contracts\ValidatePayerServiceContract;
@@ -20,7 +19,6 @@ class TransactionService implements TransactionServiceContract
      * @param  TransactionRepositoryContract  $repository
      * @param  UserServiceContract  $userService
      * @param  AuthorizationServiceContract  $authorizationService
-     * @param  NotificationServiceContract  $notificationService
      * @param  StoreTransactionServiceContract  $storeService
      * @param  ValidatePayerServiceContract  $validatePayerService
      */
@@ -28,7 +26,6 @@ class TransactionService implements TransactionServiceContract
         protected TransactionRepositoryContract $repository,
         protected UserServiceContract $userService,
         protected AuthorizationServiceContract $authorizationService,
-        protected NotificationServiceContract $notificationService,
         protected StoreTransactionServiceContract $storeService,
         protected ValidatePayerServiceContract $validatePayerService
     ) {
@@ -82,15 +79,10 @@ class TransactionService implements TransactionServiceContract
 
     /**
      * @return void
-     *
-     * @throws NotificationToPayeeNotSendedException
      */
     private function sendNotificationToPayee(): void
     {
-        $authorization = $this->notificationService->send();
-
-        if (empty($authorization['success']) || ! $authorization['success']) {
-            throw new NotificationToPayeeNotSendedException();
-        }
+        $job = new SendNotificationJob();
+        $job->dispatch();
     }
 }

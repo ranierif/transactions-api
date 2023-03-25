@@ -4,9 +4,9 @@ namespace Tests\Unit\Services\Transaction;
 
 use App\Enums\Status;
 use App\Exceptions\Authorization\UnauthorizedToStoreTransactionException;
-use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
 use App\Exceptions\Transaction\InsufficientFundsToSendException;
 use App\Exceptions\Transaction\PayerCannotSendTransactionsException;
+use App\Jobs\Notification\SendNotificationJob;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Authorization\AuthorizationService;
@@ -15,6 +15,7 @@ use App\Services\Notification\Contracts\NotificationServiceContract;
 use App\Services\Notification\NotificationService;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -29,6 +30,7 @@ class TransactionServiceTest extends TestCase
     public function test_can_store_new_transaction_in_service(): void
     {
         // Arrange
+        Queue::fake();
         $this->mockAuthorizationServiceSuccess();
         $this->mockNotificationServiceSuccess();
         $userPerson = User::factory()->create(['document_type_id' => 1]);
@@ -45,6 +47,8 @@ class TransactionServiceTest extends TestCase
 
         // Assert
         $this->assertInstanceOf(Transaction::class, $transaction);
+
+        Queue::assertPushed(SendNotificationJob::class);
 
         $this->assertDatabaseHas(Transaction::class, [
             'payer_id' => $userPerson->id,
@@ -112,28 +116,6 @@ class TransactionServiceTest extends TestCase
         // Arrange
         $this->mockAuthorizationServiceError();
         $this->expectException(UnauthorizedToStoreTransactionException::class);
-        $userPerson = User::factory()->create(['document_type_id' => 1]);
-        $userCompany = User::factory()->create(['document_type_id' => 2]);
-        $value = 100;
-
-        // Act
-        app(TransactionServiceContract::class)
-            ->handleNewTransaction(
-                $userPerson->id,
-                $userCompany->id,
-                $value
-            );
-    }
-
-    /**
-     * @return void
-     */
-    public function test_cannot_store_new_transaction_when_not_send_notification_exception(): void
-    {
-        // Arrange
-        $this->mockAuthorizationServiceSuccess();
-        $this->mockNotificationServiceError();
-        $this->expectException(NotificationToPayeeNotSendedException::class);
         $userPerson = User::factory()->create(['document_type_id' => 1]);
         $userCompany = User::factory()->create(['document_type_id' => 2]);
         $value = 100;
