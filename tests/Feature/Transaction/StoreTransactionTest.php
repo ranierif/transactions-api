@@ -7,6 +7,8 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Authorization\AuthorizationService;
 use App\Services\Authorization\Contracts\AuthorizationServiceContract;
+use App\Services\Notification\Contracts\NotificationServiceContract;
+use App\Services\Notification\NotificationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
@@ -31,6 +33,7 @@ class StoreTransactionTest extends TestCase
     {
         // Arrange
         $this->mockAuthorizationServiceSuccess();
+        $this->mockNotificationServiceSuccess();
         $userPerson = User::factory()->create(['document_type_id' => 1]);
         $userCompany = User::factory()->create(['document_type_id' => 2]);
         $payload = [
@@ -219,6 +222,31 @@ class StoreTransactionTest extends TestCase
         return [
             'success' => false,
             'message' => 'Fake error message',
+        ];
+    }
+
+    /**
+     * @return void
+     */
+    private function mockNotificationServiceSuccess(): void
+    {
+        $this->instance(
+            NotificationServiceContract::class,
+            Mockery::mock(NotificationService::class, function (MockInterface $mock) {
+                return $mock->shouldReceive('send')
+                    ->andReturn($this->mockNotificationResponseSuccess());
+            })
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function mockNotificationResponseSuccess(): array
+    {
+        return [
+            'success' => true,
+            'message' => 'Success',
         ];
     }
 }
