@@ -19,17 +19,17 @@ class ChargebackService implements ChargebackServiceContract
     /**
      * @param  ChargebackRepositoryContract  $chargebackRepository
      * @param  TransactionServiceContract  $transactionService
-     * @param  GetTransactionServiceContract  $getTransactionService
-     * @param  StoreTransactionServiceContract  $storeTransactionService
-     * @param  UpdateTransactionServiceContract  $updateTransactionService
+     * @param  GetTransactionServiceContract  $getTransaction
+     * @param  StoreTransactionServiceContract  $storeTransaction
+     * @param  UpdateTransactionServiceContract  $updateTransaction
      * @param  Connection  $connection
      */
     public function __construct(
         protected ChargebackRepositoryContract $chargebackRepository,
         protected TransactionServiceContract $transactionService,
-        protected GetTransactionServiceContract $getTransactionService,
-        protected StoreTransactionServiceContract $storeTransactionService,
-        protected UpdateTransactionServiceContract $updateTransactionService,
+        protected GetTransactionServiceContract $getTransaction,
+        protected StoreTransactionServiceContract $storeTransaction,
+        protected UpdateTransactionServiceContract $updateTransaction,
         protected Connection $connection
     ) {
         //
@@ -40,7 +40,7 @@ class ChargebackService implements ChargebackServiceContract
      */
     public function handleChargeback(int $transactionId, ?string $reason): Chargeback
     {
-        $transaction = $this->getTransactionService
+        $transaction = $this->getTransaction
             ->getTransactionById($transactionId);
 
         $this->canChargeback($transaction->status_id);
@@ -78,7 +78,7 @@ class ChargebackService implements ChargebackServiceContract
      */
     private function storeReversalTransaction(Transaction $transaction): Transaction
     {
-        return $this->storeTransactionService->storeTransaction(
+        return $this->storeTransaction->storeTransaction(
             payerId: $transaction->payee_id,
             payeeId: $transaction->payer_id,
             value: $transaction->value,
@@ -92,7 +92,7 @@ class ChargebackService implements ChargebackServiceContract
      */
     private function updateOriginTransaction(int $transactionId): bool
     {
-        return $this->updateTransactionService->updateStatus(
+        return $this->updateTransaction->updateStatus(
             $transactionId,
             Status::CHARGEBACK->value
         );

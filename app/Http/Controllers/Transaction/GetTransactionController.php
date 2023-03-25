@@ -15,11 +15,11 @@ use Illuminate\Log\Logger;
 class GetTransactionController extends Controller
 {
     /**
-     * @param  GetTransactionServiceContract  $getTransactionService
+     * @param  GetTransactionServiceContract  $getTransaction
      * @param  Logger  $logger
      */
     public function __construct(
-        private GetTransactionServiceContract $getTransactionService,
+        private GetTransactionServiceContract $getTransaction,
         private Logger $logger
     ) {
         //
@@ -34,7 +34,7 @@ class GetTransactionController extends Controller
         $responseBuilder = new ResponseBuilder();
 
         try {
-            $transaction = $this->getTransactionService
+            $transaction = $this->getTransaction
                 ->getTransactionById(
                     $transactionId
                 );
