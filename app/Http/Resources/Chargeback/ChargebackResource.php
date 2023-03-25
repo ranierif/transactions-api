@@ -16,10 +16,10 @@ class ChargebackResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'origin_transaction' => new TransactionResource($this->resource->originTransaction),
-            'reversal_transaction' => new TransactionResource($this->resource->reversalTransaction),
-            'reason' => $this->resource->reason,
-            'created_at' => $this->resource->created_at->format('Y-m-d H:i:s'),
+            'origin_transaction' => new TransactionResource($this->originTransaction),
+            'reversal_transaction' => new TransactionResource($this->reversalTransaction),
+            'reason' => $this->reason,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
         ];
     }
 }
