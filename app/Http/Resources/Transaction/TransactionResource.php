@@ -19,7 +19,7 @@ class TransactionResource extends JsonResource
             'id' => $this->resource->id,
             'payer' => new UserResource($this->payer),
             'payee' => new UserResource($this->payee),
-            'value' => $this->resource->valueInReal,
+            'value' => $this->resource->valueInReal(),
             'status' => $this->resource->status->title,
             'created_at' => $this->resource->created_at->format('Y-m-d H:i:s'),
         ];

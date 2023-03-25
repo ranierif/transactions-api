@@ -20,7 +20,7 @@ class UserResource extends JsonResource
             'name' => $this->resource->name,
             'document_type' => $this->resource->documentType->type,
             'document' => $this->resource->document_number,
-            'balance' => $this->resource->balanceInReal,
+            'balance' => $this->resource->balanceInReal(),
         ];
     }
 }

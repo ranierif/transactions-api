@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Traits\FormatMoney;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -50,12 +49,10 @@ class Transaction extends Model
     }
 
     /**
-     * @return Attribute
+     * @return string
      */
-    protected function valueInReal(): Attribute
+    public function valueInReal(): string
     {
-        return Attribute::make(
-            get: fn () => (string) self::convertCentsToReal($this->value ?? 0)
-        );
+        return self::convertCentsToReal($this->value ?? 0);
     }
 }
