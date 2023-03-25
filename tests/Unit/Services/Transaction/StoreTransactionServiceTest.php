@@ -14,6 +14,18 @@ class StoreTransactionServiceTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * @var StoreTransactionServiceContract
+     */
+    private $storeTransaction;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->storeTransaction = app(StoreTransactionServiceContract::class);
+    }
+
+    /**
      * @return void
      */
     public function test_store_transaction_complete_status_successfully(): void
@@ -29,7 +41,7 @@ class StoreTransactionServiceTest extends TestCase
         ];
 
         // Act
-        $transaction = app(StoreTransactionServiceContract::class)
+        $transaction = $this->storeTransaction
             ->storeTransaction(
                 $params['payer_id'],
                 $params['payee_id'],
@@ -64,7 +76,7 @@ class StoreTransactionServiceTest extends TestCase
         ];
 
         // Act
-        $transaction = app(StoreTransactionServiceContract::class)
+        $transaction = $this->storeTransaction
             ->storeTransaction(
                 $params['payer_id'],
                 $params['payee_id'],

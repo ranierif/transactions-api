@@ -16,6 +16,18 @@ class GetTransactionServiceTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * @var GetTransactionServiceContract
+     */
+    private $getTransaction;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->getTransaction = app(GetTransactionServiceContract::class);
+    }
+
+    /**
      * @return void
      */
     public function test_get_transactions_from_user_id_and_return_a_collection(): void
@@ -27,11 +39,19 @@ class GetTransactionServiceTest extends TestCase
         ]);
 
         // Act
-        $getTransactions = app(GetTransactionServiceContract::class)->getTransactionsByUserId($user->id);
+        $getTransactions = $this->getTransaction
+            ->getTransactionsByUserId($user->id);
 
         // Assert
-        $this->assertInstanceOf(Collection::class, $getTransactions);
-        $this->assertEquals($getTransactions->count(), 10);
+        $this->assertInstanceOf(
+            Collection::class,
+            $getTransactions
+        );
+
+        $this->assertEquals(
+            $getTransactions->count(),
+            10
+        );
     }
 
     /**
@@ -43,12 +63,19 @@ class GetTransactionServiceTest extends TestCase
         $transaction = Transaction::factory()->create();
 
         // Act
-        $getTransaction = app(GetTransactionServiceContract::class)->getTransactionById($transaction->id);
+        $getTransaction = $this->getTransaction
+            ->getTransactionById($transaction->id);
 
         // Assert
-        $this->assertInstanceOf(Transaction::class, $getTransaction);
+        $this->assertInstanceOf(
+            Transaction::class,
+            $getTransaction
+        );
 
-        $this->assertEquals($getTransaction->id, $transaction->id);
+        $this->assertEquals(
+            $getTransaction->id,
+            $transaction->id
+        );
     }
 
     /**
@@ -60,7 +87,8 @@ class GetTransactionServiceTest extends TestCase
         $this->expectException(ModelNotFoundException::class);
 
         // Act
-        $getTransaction = app(GetTransactionServiceContract::class)->getTransactionById(1550);
+        $getTransaction = $this->getTransaction
+            ->getTransactionById(1550);
     }
 
     /**
@@ -72,12 +100,16 @@ class GetTransactionServiceTest extends TestCase
         $transactions = Transaction::factory(10)->create();
 
         // Act
-        $getTransactions = app(GetTransactionServiceContract::class)->getTransactions([]);
+        $getTransactions = $this->getTransaction
+            ->getTransactions([]);
 
         // Assert
         $this->assertInstanceOf(Collection::class, $getTransactions);
 
-        $this->assertEquals($getTransactions->count(), $transactions->count());
+        $this->assertEquals(
+            $getTransactions->count(),
+            $transactions->count()
+        );
     }
 
     /**
@@ -91,14 +123,18 @@ class GetTransactionServiceTest extends TestCase
         $countTransactionsFromPayerId = Transaction::where('payer_id', $firstPayerId)->count();
 
         // Act
-        $getTransactions = app(GetTransactionServiceContract::class)->getTransactions([
-            'payer_id' => $firstPayerId,
-        ]);
+        $getTransactions = $this->getTransaction
+            ->getTransactions([
+                'payer_id' => $firstPayerId,
+            ]);
 
         // Assert
         $this->assertInstanceOf(Collection::class, $getTransactions);
 
-        $this->assertEquals($getTransactions->count(), $countTransactionsFromPayerId);
+        $this->assertEquals(
+            $getTransactions->count(),
+            $countTransactionsFromPayerId
+        );
     }
 
     /**
@@ -112,14 +148,21 @@ class GetTransactionServiceTest extends TestCase
         $countTransactionsFromPayeeId = Transaction::where('payee_id', $firstPayeeId)->count();
 
         // Act
-        $getTransactions = app(GetTransactionServiceContract::class)->getTransactions([
-            'payee_id' => $firstPayeeId,
-        ]);
+        $getTransactions = $this->getTransaction
+            ->getTransactions([
+                'payee_id' => $firstPayeeId,
+            ]);
 
         // Assert
-        $this->assertInstanceOf(Collection::class, $getTransactions);
+        $this->assertInstanceOf(
+            Collection::class,
+            $getTransactions
+        );
 
-        $this->assertEquals($getTransactions->count(), $countTransactionsFromPayeeId);
+        $this->assertEquals(
+            $getTransactions->count(),
+            $countTransactionsFromPayeeId
+        );
     }
 
     /**
@@ -132,13 +175,20 @@ class GetTransactionServiceTest extends TestCase
         $countTransactionsFromStatusId = Transaction::where('status_id', Status::COMPLETE->value)->count();
 
         // Act
-        $getTransactions = app(GetTransactionServiceContract::class)->getTransactions([
-            'status_id' => Status::COMPLETE->value,
-        ]);
+        $getTransactions = $this->getTransaction
+            ->getTransactions([
+                'status_id' => Status::COMPLETE->value,
+            ]);
 
         // Assert
-        $this->assertInstanceOf(Collection::class, $getTransactions);
+        $this->assertInstanceOf(
+            Collection::class,
+            $getTransactions
+        );
 
-        $this->assertEquals($getTransactions->count(), $countTransactionsFromStatusId);
+        $this->assertEquals(
+            $getTransactions->count(),
+            $countTransactionsFromStatusId
+        );
     }
 }

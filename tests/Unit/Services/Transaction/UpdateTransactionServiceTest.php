@@ -13,6 +13,18 @@ class UpdateTransactionServiceTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * @var UpdateTransactionServiceContract
+     */
+    private $updateTransaction;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->updateTransaction = app(UpdateTransactionServiceContract::class);
+    }
+
+    /**
      * @return void
      */
     public function test_update_transaction_status(): void
@@ -23,7 +35,7 @@ class UpdateTransactionServiceTest extends TestCase
         ]);
 
         // Act
-        $updateStatus = app(UpdateTransactionServiceContract::class)
+        $updateStatus = $this->updateTransaction
             ->updateStatus(
                 $transaction->id,
                 Status::CHARGEBACK->value

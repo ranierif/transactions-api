@@ -15,6 +15,18 @@ class ValidatePayerServiceTest extends TestCase
     use RefreshDatabase;
 
     /**
+     * @var ValidatePayerServiceContract
+     */
+    private $validatePayer;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->validatePayer = app(ValidatePayerServiceContract::class);
+    }
+
+    /**
      * @return void
      */
     public function test_check_if_payer_can_send_transaction(): void
@@ -25,7 +37,7 @@ class ValidatePayerServiceTest extends TestCase
         ]);
 
         // Act
-        $canSendTransaction = app(ValidatePayerServiceContract::class)
+        $canSendTransaction = $this->validatePayer
             ->canSendTransaction(
                 $payer->id,
             );
@@ -46,7 +58,7 @@ class ValidatePayerServiceTest extends TestCase
         ]);
 
         // Act
-        app(ValidatePayerServiceContract::class)
+        $this->validatePayer
             ->canSendTransaction(
                 $payer->id,
             );
@@ -64,7 +76,7 @@ class ValidatePayerServiceTest extends TestCase
         $value = $payer->balance;
 
         // Act
-        $hasBalanceToSend = app(ValidatePayerServiceContract::class)
+        $hasBalanceToSend = $this->validatePayer
             ->hasBalanceToSend(
                 $payer->id,
                 $value,
@@ -87,7 +99,7 @@ class ValidatePayerServiceTest extends TestCase
         $value = $payer->balance + 100;
 
         // Act
-        app(ValidatePayerServiceContract::class)
+        $this->validatePayer
             ->hasBalanceToSend(
                 $payer->id,
                 $value,
