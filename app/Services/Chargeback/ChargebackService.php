@@ -8,6 +8,7 @@ use App\Models\Chargeback;
 use App\Models\Transaction;
 use App\Repositories\Chargeback\Contracts\ChargebackRepositoryContract;
 use App\Services\Chargeback\Contracts\ChargebackServiceContract;
+use App\Services\Chargeback\Contracts\StoreChargebackServiceContract;
 use App\Services\Transaction\Contracts\GetTransactionServiceContract;
 use App\Services\Transaction\Contracts\StoreTransactionServiceContract;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
@@ -22,6 +23,7 @@ class ChargebackService implements ChargebackServiceContract
      * @param  GetTransactionServiceContract  $getTransaction
      * @param  StoreTransactionServiceContract  $storeTransaction
      * @param  UpdateTransactionServiceContract  $updateTransaction
+     * @param  StoreChargebackServiceContract  $storeChargebackService
      * @param  Connection  $connection
      */
     public function __construct(
@@ -30,6 +32,7 @@ class ChargebackService implements ChargebackServiceContract
         protected GetTransactionServiceContract $getTransaction,
         protected StoreTransactionServiceContract $storeTransaction,
         protected UpdateTransactionServiceContract $updateTransaction,
+        protected StoreChargebackServiceContract $storeChargebackService,
         protected Connection $connection
     ) {
         //
@@ -49,11 +52,12 @@ class ChargebackService implements ChargebackServiceContract
             $this->updateOriginTransaction($transaction->id);
             $transactionReversal = $this->storeReversalTransaction($transaction);
 
-            return $this->storeChargeback(
-                $transaction,
-                $transactionReversal,
-                $reason
-            );
+            return $this->storeChargebackService
+                    ->storeChargeback(
+                        $transaction->id,
+                        $transactionReversal->id,
+                        $reason
+                    );
         });
 
         return $chargeback;
@@ -96,20 +100,5 @@ class ChargebackService implements ChargebackServiceContract
             $transactionId,
             Status::CHARGEBACK->value
         );
-    }
-
-    /**
-     * @param  Transaction  $origin
-     * @param  Transaction  $reversal
-     * @param  null|string  $reason
-     * @return null|Chargeback
-     */
-    private function storeChargeback(Transaction $origin, Transaction $reversal, ?string $reason): ?Chargeback
-    {
-        return $this->chargebackRepository->store([
-            'origin_transaction_id' => $origin->id,
-            'reversal_transaction_id' => $reversal->id,
-            'reason' => $reason,
-        ]);
     }
 }
