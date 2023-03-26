@@ -11,5 +11,5 @@ interface ChargebackServiceContract
      * @param  null|string  $reason
      * @return Chargeback
      */
-    public function handleChargeback(int $transactionId, ?string $reason): Chargeback;
+    public function handleChargeback(int $transactionId, ?string $reason = null): Chargeback;
 }

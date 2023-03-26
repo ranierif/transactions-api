@@ -41,7 +41,7 @@ class ChargebackService implements ChargebackServiceContract
     /**
      * {@inheritDoc}
      */
-    public function handleChargeback(int $transactionId, ?string $reason): Chargeback
+    public function handleChargeback(int $transactionId, ?string $reason = null): Chargeback
     {
         $transaction = $this->getTransaction
             ->getTransactionById($transactionId);
