@@ -10,6 +10,7 @@ use App\Http\Requests\Transaction\TransactionStoreRequest;
 use App\Http\Resources\Transaction\TransactionResource;
 use App\Responses\ResponseBuilder;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
+use App\Traits\FormatMoney;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -17,6 +18,8 @@ use Illuminate\Log\Logger;
 
 class StoreTransactionController extends Controller
 {
+    use FormatMoney;
+
     /**
      * @param  TransactionServiceContract  $transactionService
      * @param  Logger  $logger
@@ -40,7 +43,7 @@ class StoreTransactionController extends Controller
             $data = $request->validated();
             $payerId = $data['payer_id'];
             $payeeId = $data['payee_id'];
-            $value = $data['value'];
+            $value = $this->convertRealToCents($data['value']);
 
             $transaction = $this->transactionService
                 ->handleNewTransaction(

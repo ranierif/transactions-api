@@ -51,21 +51,23 @@ class StoreTransactionTest extends TestCase
         // Assert
         $response->assertStatus(Response::HTTP_CREATED);
 
+        $valueToCents = ($payload['value'] * 100);
+
         $this->assertDatabaseHas(Transaction::class, [
             'payer_id' => $payload['payer_id'],
             'payee_id' => $payload['payee_id'],
-            'value' => $payload['value'],
+            'value' => $valueToCents,
             'status_id' => Status::COMPLETE->value,
         ]);
 
         $this->assertDatabaseHas(User::class, [
             'id' => $userPerson->id,
-            'balance' => ($userPerson->balance - $payload['value']),
+            'balance' => ($userPerson->balance - $valueToCents),
         ]);
 
         $this->assertDatabaseHas(User::class, [
             'id' => $userCompany->id,
-            'balance' => ($userCompany->balance + $payload['value']),
+            'balance' => ($userCompany->balance + $valueToCents),
         ]);
     }
 
@@ -115,7 +117,7 @@ class StoreTransactionTest extends TestCase
         $payload = [
             'payer_id' => $userPerson->id,
             'payee_id' => $userCompany->id,
-            'value' => $userPerson->balance + 100,
+            'value' => ($userPerson->balance * 100) + 1,
         ];
 
         // Act
@@ -128,7 +130,7 @@ class StoreTransactionTest extends TestCase
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
 
         $response->assertJson([
-            'message' => 'Insufficient fund to send transaction',
+            'message' => 'Insufficient funds to send transaction',
         ]);
 
         $this->assertDatabaseMissing(Transaction::class, [
@@ -151,7 +153,7 @@ class StoreTransactionTest extends TestCase
         $payload = [
             'payer_id' => $userPerson->id,
             'payee_id' => $userCompany->id,
-            'value' => $userPerson->balance,
+            'value' => 1,
         ];
 
         // Act

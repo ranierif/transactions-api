@@ -14,7 +14,7 @@ class InsufficientFundsToSendException extends Exception
      * @param  Throwable|null  $previous
      */
     public function __construct(
-        string $message = 'Insufficient fund to send transaction',
+        string $message = 'Insufficient funds to send transaction',
         int $code = Response::HTTP_BAD_REQUEST,
         ?Throwable $previous = null
     ) {

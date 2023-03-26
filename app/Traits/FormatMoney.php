@@ -12,4 +12,13 @@ trait FormatMoney
     {
         return number_format(($cents / 100), 2, ',', '.');
     }
+
+    /**
+     * @param  float  $real
+     * @return int
+     */
+    public static function convertRealToCents(float $real): int
+    {
+        return $real * 100;
+    }
 }

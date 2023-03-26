@@ -16,7 +16,7 @@ class TransactionStoreRequest extends FormRequest
         return [
             'payer_id' => ['required', 'integer', 'exists:users,id'],
             'payee_id' => ['required', 'integer', 'exists:users,id'],
-            'value' => ['required', 'integer', 'gt:0'],
+            'value' => ['required', 'numeric', 'gt:0'],
         ];
     }
 }
