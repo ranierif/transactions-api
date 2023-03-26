@@ -53,7 +53,7 @@ class ChargebackService implements ChargebackServiceContract
             $transactionReversal = $this->storeReversalTransaction($transaction);
 
             return $this->storeChargebackService
-                    ->storeChargeback(
+                    ->store(
                         $transaction->id,
                         $transactionReversal->id,
                         $reason

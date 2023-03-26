@@ -12,5 +12,5 @@ interface StoreChargebackServiceContract
      * @param  null|string $reason
      * @return null|Chargeback
      */
-    public function storeChargeback(int $originId, int $reversalId, ?string $reason): ?Chargeback;
+    public function store(int $originId, int $reversalId, ?string $reason = null): ?Chargeback;
 }

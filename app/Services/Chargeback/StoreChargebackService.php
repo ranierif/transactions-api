@@ -20,7 +20,7 @@ class StoreChargebackService implements StoreChargebackServiceContract
     /**
      * {@inheritDoc}
      */
-    public function storeChargeback(int $originId, int $reversalId, ?string $reason): ?Chargeback
+    public function store(int $originId, int $reversalId, ?string $reason = null): ?Chargeback
     {
         return $this->chargebackRepository->store([
             'origin_transaction_id' => $originId,
