@@ -23,7 +23,7 @@ class ChargebackService implements ChargebackServiceContract
      * @param  GetTransactionServiceContract  $getTransaction
      * @param  StoreTransactionServiceContract  $storeTransaction
      * @param  UpdateTransactionServiceContract  $updateTransaction
-     * @param  StoreChargebackServiceContract  $storeChargebackService
+     * @param  StoreChargebackServiceContract  $storeChargeback
      * @param  Connection  $connection
      */
     public function __construct(
@@ -32,7 +32,7 @@ class ChargebackService implements ChargebackServiceContract
         protected GetTransactionServiceContract $getTransaction,
         protected StoreTransactionServiceContract $storeTransaction,
         protected UpdateTransactionServiceContract $updateTransaction,
-        protected StoreChargebackServiceContract $storeChargebackService,
+        protected StoreChargebackServiceContract $storeChargeback,
         protected Connection $connection
     ) {
         //
@@ -52,7 +52,7 @@ class ChargebackService implements ChargebackServiceContract
             $this->updateOriginTransaction($transaction->id);
             $transactionReversal = $this->storeReversalTransaction($transaction);
 
-            return $this->storeChargebackService
+            return $this->storeChargeback
                     ->store(
                         $transaction->id,
                         $transactionReversal->id,
