@@ -4,6 +4,7 @@ namespace App\Services\Chargeback;
 
 use App\Enums\Status;
 use App\Exceptions\Chargeback\TransactionAlreadyHasChargebackException;
+use App\Jobs\Notification\SendNotificationJob;
 use App\Models\Chargeback;
 use App\Models\Transaction;
 use App\Repositories\Chargeback\Contracts\ChargebackRepositoryContract;
@@ -60,6 +61,10 @@ class ChargebackService implements ChargebackServiceContract
                     );
         });
 
+        $this->sendNotificationToPayee(
+            $chargeback->reversalTransaction
+        );
+
         return $chargeback;
     }
 
@@ -100,5 +105,13 @@ class ChargebackService implements ChargebackServiceContract
             $transactionId,
             Status::CHARGEBACK->value
         );
+    }
+
+    /**
+     * @return void
+     */
+    private function sendNotificationToPayee(Transaction $transaction): void
+    {
+        dispatch(new SendNotificationJob($transaction));
     }
 }

@@ -4,11 +4,13 @@ namespace Tests\Unit\Services\Transaction;
 
 use App\Enums\Status;
 use App\Exceptions\Chargeback\TransactionAlreadyHasChargebackException;
+use App\Jobs\Notification\SendNotificationJob;
 use App\Models\Chargeback;
 use App\Models\Transaction;
 use App\Services\Chargeback\Contracts\ChargebackServiceContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class ChargebackServiceTest extends TestCase
@@ -22,6 +24,7 @@ class ChargebackServiceTest extends TestCase
     public function test_can_store_new_chargeback_with_reason(): void
     {
         // Arrange
+        Queue::fake();
         $transaction = Transaction::factory()->create([
             'value' => 500,
             'status_id' => Status::COMPLETE->value,
@@ -37,6 +40,8 @@ class ChargebackServiceTest extends TestCase
 
         // Assert
         $this->assertInstanceOf(Chargeback::class, $chargeback);
+
+        Queue::assertPushed(SendNotificationJob::class);
 
         $this->assertDatabaseHas(Chargeback::class, [
             'origin_transaction_id' => $transaction->id,
@@ -64,6 +69,7 @@ class ChargebackServiceTest extends TestCase
     public function test_can_store_new_chargeback_without_reason(): void
     {
         // Arrange
+        Queue::fake();
         $transaction = Transaction::factory()->create([
             'value' => 500,
             'status_id' => Status::COMPLETE->value,
@@ -77,6 +83,8 @@ class ChargebackServiceTest extends TestCase
 
         // Assert
         $this->assertInstanceOf(Chargeback::class, $chargeback);
+
+        Queue::assertPushed(SendNotificationJob::class);
 
         $this->assertDatabaseHas(Chargeback::class, [
             'origin_transaction_id' => $transaction->id,

@@ -3,11 +3,13 @@
 namespace Tests\Feature\Chargeback;
 
 use App\Enums\Status;
+use App\Jobs\Notification\SendNotificationJob;
 use App\Models\Chargeback;
 use App\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class StoreChargebackTest extends TestCase
@@ -26,6 +28,7 @@ class StoreChargebackTest extends TestCase
     public function test_can_store_chargeback_successfully(): void
     {
         // Arrange
+        Queue::fake();
         $transaction = Transaction::factory()->create();
         $payload = [
             'reason' => $this->faker()->text(200),
@@ -39,6 +42,8 @@ class StoreChargebackTest extends TestCase
 
         // Assert
         $response->assertStatus(Response::HTTP_CREATED);
+
+        Queue::assertPushed(SendNotificationJob::class);
 
         $this->assertDatabaseHas(Chargeback::class, [
             'origin_transaction_id' => $transaction->id,

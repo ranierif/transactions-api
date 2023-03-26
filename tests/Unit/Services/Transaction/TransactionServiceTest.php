@@ -11,8 +11,6 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Services\Authorization\AuthorizationService;
 use App\Services\Authorization\Contracts\AuthorizationServiceContract;
-use App\Services\Notification\Contracts\NotificationServiceContract;
-use App\Services\Notification\NotificationService;
 use App\Services\Transaction\Contracts\TransactionServiceContract;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -32,7 +30,6 @@ class TransactionServiceTest extends TestCase
         // Arrange
         Queue::fake();
         $this->mockAuthorizationServiceSuccess();
-        $this->mockNotificationServiceSuccess();
         $userPerson = User::factory()->create(['document_type_id' => 1]);
         $userCompany = User::factory()->create(['document_type_id' => 2]);
         $value = 100;
@@ -172,56 +169,6 @@ class TransactionServiceTest extends TestCase
      * @return array
      */
     private function mockAuthorizationResponseError(): array
-    {
-        return [
-            'success' => false,
-            'message' => 'Fake error message',
-        ];
-    }
-
-    /**
-     * @return void
-     */
-    private function mockNotificationServiceSuccess(): void
-    {
-        $this->instance(
-            NotificationServiceContract::class,
-            Mockery::mock(NotificationService::class, function (MockInterface $mock) {
-                return $mock->shouldReceive('send')
-                    ->andReturn($this->mockNotificationResponseSuccess());
-            })
-        );
-    }
-
-    /**
-     * @return array
-     */
-    private function mockNotificationResponseSuccess(): array
-    {
-        return [
-            'success' => true,
-            'message' => 'Success',
-        ];
-    }
-
-    /**
-     * @return void
-     */
-    private function mockNotificationServiceError(): void
-    {
-        $this->instance(
-            NotificationServiceContract::class,
-            Mockery::mock(NotificationService::class, function (MockInterface $mock) {
-                return $mock->shouldReceive('send')
-                    ->andReturn($this->mockNotificationResponseError());
-            })
-        );
-    }
-
-    /**
-     * @return array
-     */
-    private function mockNotificationResponseError(): array
     {
         return [
             'success' => false,
