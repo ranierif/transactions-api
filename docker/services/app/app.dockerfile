@@ -35,6 +35,10 @@ RUN docker-php-ext-install bcmath
 RUN docker-php-ext-install exif
 RUN docker-php-ext-install pdo_mysql
 
+# Install pcntl
+RUN docker-php-ext-configure pcntl --enable-pcntl \
+  && docker-php-ext-install pcntl
+
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 

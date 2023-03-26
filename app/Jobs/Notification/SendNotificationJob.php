@@ -3,6 +3,7 @@
 namespace App\Jobs\Notification;
 
 use App\Exceptions\Notification\NotificationToPayeeNotSendedException;
+use App\Models\Transaction;
 use App\Services\Notification\Contracts\NotificationServiceContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,9 +35,9 @@ class SendNotificationJob implements ShouldQueue
     public $tries = self::TRIES_TIMES;
 
     /**
-     * Create a new job instance.
+     * @param Transaction $transaction
      */
-    public function __construct()
+    public function __construct(public Transaction $transaction)
     {
         //
     }
@@ -63,6 +64,9 @@ class SendNotificationJob implements ShouldQueue
      */
     public function tags()
     {
-        return ['SendNotificationJob'];
+        return [
+            'SendNotificationJob',
+            $this->transaction->id
+        ];
     }
 }

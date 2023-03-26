@@ -58,7 +58,9 @@ class TransactionService implements TransactionServiceContract
             );
 
         // 5 - Notify payee about new transaction
-        $this->sendNotificationToPayee();
+        $this->sendNotificationToPayee(
+            $transaction
+        );
 
         return $transaction;
     }
@@ -80,9 +82,8 @@ class TransactionService implements TransactionServiceContract
     /**
      * @return void
      */
-    private function sendNotificationToPayee(): void
+    private function sendNotificationToPayee(Transaction $transaction): void
     {
-        $job = new SendNotificationJob();
-        $job->dispatch();
+        dispatch(new SendNotificationJob($transaction));
     }
 }
