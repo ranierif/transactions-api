@@ -16,6 +16,9 @@ class UserServiceTest extends TestCase
      */
     private $userService;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();

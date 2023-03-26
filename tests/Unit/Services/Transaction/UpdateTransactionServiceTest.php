@@ -17,6 +17,9 @@ class UpdateTransactionServiceTest extends TestCase
      */
     private $updateTransaction;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();

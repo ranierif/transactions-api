@@ -18,6 +18,9 @@ class StoreTransactionServiceTest extends TestCase
      */
     private $storeTransaction;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         parent::setUp();
