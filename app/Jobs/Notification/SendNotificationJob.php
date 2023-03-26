@@ -35,7 +35,7 @@ class SendNotificationJob implements ShouldQueue
     public $tries = self::TRIES_TIMES;
 
     /**
-     * @param Transaction $transaction
+     * @param  Transaction  $transaction
      */
     public function __construct(public Transaction $transaction)
     {
@@ -66,7 +66,7 @@ class SendNotificationJob implements ShouldQueue
     {
         return [
             'SendNotificationJob',
-            $this->transaction->id
+            $this->transaction->id,
         ];
     }
 }
