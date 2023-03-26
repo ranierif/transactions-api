@@ -89,4 +89,28 @@ class StoreChargebackTest extends TestCase
             'reason' => $payload['reason'],
         ]);
     }
+
+    /**
+     * @return void
+     */
+    public function test_cannot_store_chargeback_with_invalid_transaction_id(): void
+    {
+        // Arrange
+        $payload = [
+            'reason' => $this->faker()->text(200),
+        ];
+
+        // Act
+        $response = $this->postJson(
+            route(self::ROUTE_NAME, 150),
+            $payload
+        );
+
+        // Assert
+        $response->assertStatus(Response::HTTP_NOT_FOUND);
+
+        $response->assertJson([
+            'message' => 'Transaction not found',
+        ]);
+    }
 }

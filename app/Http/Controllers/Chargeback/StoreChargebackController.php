@@ -9,6 +9,7 @@ use App\Http\Resources\Chargeback\ChargebackResource;
 use App\Responses\ResponseBuilder;
 use App\Services\Chargeback\Contracts\ChargebackServiceContract;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Log\Logger;
@@ -60,6 +61,17 @@ class StoreChargebackController extends Controller
 
             return $responseBuilder->message($exception->getMessage())
                 ->status($exception->getCode())
+                ->build();
+        } catch (ModelNotFoundException $exception) {
+            $this->logger->error('Transaction not found', [
+                'code' => 'transaction_id_not_found',
+                'exception' => $exception,
+                'request' => $request,
+                'transaction_id' => $transactionId,
+            ]);
+
+            return $responseBuilder->message('Transaction not found')
+                ->status(Response::HTTP_NOT_FOUND)
                 ->build();
         } catch (Exception $exception) {
             $this->logger->critical('Unexpected error in '.self::class, [
