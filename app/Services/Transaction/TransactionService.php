@@ -80,6 +80,7 @@ class TransactionService implements TransactionServiceContract
     }
 
     /**
+     * @param  Transaction  $transaction
      * @return void
      */
     private function sendNotificationToPayee(Transaction $transaction): void

@@ -20,7 +20,7 @@ class StoreTransactionService implements StoreTransactionServiceContract
     /**
      * {@inheritDoc}
      */
-    public function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): Transaction
+    public function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): ?Transaction
     {
         return $this->repository->store([
             'payer_id' => $payerId,

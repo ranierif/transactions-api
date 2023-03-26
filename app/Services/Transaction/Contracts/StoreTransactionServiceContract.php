@@ -11,7 +11,7 @@ interface StoreTransactionServiceContract
      * @param  int  $payeeId
      * @param  int  $value
      * @param  int  $statusId
-     * @return Transaction
+     * @return null|Transaction
      */
-    public function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): Transaction;
+    public function storeTransaction(int $payerId, int $payeeId, int $value, int $statusId): ?Transaction;
 }

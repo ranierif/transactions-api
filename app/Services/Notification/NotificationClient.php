@@ -7,6 +7,9 @@ use GuzzleHttp\Client;
 
 class NotificationClient extends Client implements NotificationClientContract
 {
+    /**
+     * @param  array $config
+     */
     public function __construct(array $config = [])
     {
         parent::__construct($config);

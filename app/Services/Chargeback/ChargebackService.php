@@ -82,7 +82,7 @@ class ChargebackService implements ChargebackServiceContract
     }
 
     /**
-     * @param  mixed  $transaction
+     * @param  Transaction  $transaction
      * @return Transaction
      */
     private function storeReversalTransaction(Transaction $transaction): Transaction
@@ -96,7 +96,7 @@ class ChargebackService implements ChargebackServiceContract
     }
 
     /**
-     * @param  mixed  $transactionId
+     * @param  int  $transactionId
      * @return bool
      */
     private function updateOriginTransaction(int $transactionId): bool
@@ -108,6 +108,7 @@ class ChargebackService implements ChargebackServiceContract
     }
 
     /**
+     * @param  Transaction  $transaction
      * @return void
      */
     private function sendNotificationToPayee(Transaction $transaction): void
