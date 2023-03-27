@@ -8,7 +8,7 @@ use GuzzleHttp\Client;
 class AuthorizationClient extends Client implements AuthorizationClientContract
 {
     /**
-     * @param  array $config
+     * @param  array  $config
      */
     public function __construct(array $config = [])
     {
